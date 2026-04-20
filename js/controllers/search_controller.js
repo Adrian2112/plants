@@ -8,6 +8,7 @@ export default class extends Controller {
   connect() {
     this.debounceTimer = null
     this.checkUrlParams()
+    window.addEventListener("popstate", () => this.checkUrlParams())
   }
 
   async checkUrlParams() {
@@ -101,7 +102,7 @@ export default class extends Controller {
         const url = new URL(window.location)
         url.searchParams.set("taxon_id", taxon.id)
         url.searchParams.delete("url")
-        window.history.replaceState({}, "", url)
+        window.history.pushState({ taxonId: taxon.id }, "", url)
 
         this.dispatch("loaded", { detail: { taxon } })
       }
