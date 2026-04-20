@@ -5,11 +5,11 @@ const FILTERS = [
   { label: "All", termId: null, termValueId: null },
   { label: "Flowering", termId: 12, termValueId: 13 },
   { label: "Fruiting", termId: 12, termValueId: 14 },
-  { label: "Budding", termId: 12, termValueId: 15 },
-  { label: "Leaf Buds", termId: 36, termValueId: 37 },
   { label: "Green Leaves", termId: 36, termValueId: 38 },
+  { label: "Budding", termId: 12, termValueId: 15 },
   { label: "Colored Leaves", termId: 36, termValueId: 39 },
   { label: "No Leaves", termId: 36, termValueId: 40 },
+  { label: "Leaf Buds", termId: 36, termValueId: 37 },
 ]
 
 export default class extends Controller {
