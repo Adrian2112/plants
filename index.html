@@ -40,11 +40,23 @@
   </nav>
 
   <main class="section pt-6">
-    <div class="container">
-      <div class="field" data-controller="hello">
-        <div class="control">
-          <input id="search-input" class="input" type="text" placeholder="Search plant or paste iNaturalist URL..." data-hello-target="input">
+    <div class="container" data-controller="search" data-action="search:loaded->plant#show">
+      <div class="field">
+        <div class="control has-icons-left">
+          <input id="search-input" class="input" type="text"
+            placeholder="Search plant or paste iNaturalist URL..."
+            data-search-target="input"
+            data-action="input->search#onInput">
+          <span class="icon is-left">🔍</span>
         </div>
+      </div>
+
+      <div class="autocomplete-results" data-search-target="results"></div>
+
+      <div data-search-target="error"></div>
+
+      <div data-controller="plant" data-action="search:loaded@document->plant#show">
+        <div data-plant-target="container"></div>
       </div>
     </div>
   </main>
