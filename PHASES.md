@@ -4,7 +4,7 @@
 |-------|--------|-------------|
 | 1 | done | Project Setup & Core Structure |
 | 2 | done | Search & Plant Display |
-| 3 | pending | Seasonality Chart |
+| 3 | done | Seasonality Chart |
 | 4 | pending | Photo Gallery |
 | 5 | pending | Bookmarks & Offline |
 | 6 | pending | Polish & Deploy |

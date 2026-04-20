@@ -55,3 +55,48 @@ body {
 .field {
   position: relative;
 }
+
+.seasonality-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+}
+
+.seasonality-row.is-current {
+  font-weight: 700;
+}
+
+.seasonality-row.is-current .seasonality-bar {
+  background-color: var(--accent);
+}
+
+.seasonality-label {
+  width: 2rem;
+  font-size: 0.8rem;
+  color: var(--text-light);
+  flex-shrink: 0;
+}
+
+.seasonality-bar-track {
+  flex: 1;
+  height: 1rem;
+  background: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.seasonality-bar {
+  height: 100%;
+  background-color: var(--primary-light);
+  border-radius: 4px;
+  transition: width 0.4s ease-out;
+}
+
+.seasonality-value {
+  width: 2.5rem;
+  font-size: 0.75rem;
+  text-align: right;
+  color: var(--text-light);
+  flex-shrink: 0;
+}

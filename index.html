@@ -58,6 +58,24 @@
       <div data-controller="plant" data-action="search:loaded@document->plant#show">
         <div data-plant-target="container"></div>
       </div>
+
+      <div data-controller="seasonality" data-action="search:loaded@document->seasonality#show">
+        <div class="box mt-4">
+          <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
+            <h2 class="title is-5 mb-0">Seasonality</h2>
+            <div class="select is-small">
+              <select data-seasonality-target="filter" data-action="change->seasonality#onFilterChange">
+                <option>All</option>
+                <option>Flowering</option>
+                <option>Fruiting</option>
+                <option>Budding</option>
+              </select>
+            </div>
+          </div>
+          <div data-seasonality-target="chart"></div>
+          <p class="has-text-grey is-size-7 mt-2" data-seasonality-target="empty" style="display:none;"></p>
+        </div>
+      </div>
     </div>
   </main>
 </body>
