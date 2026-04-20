@@ -24,6 +24,11 @@ body {
   padding-top: 3.25rem;
 }
 
+.title, .subtitle {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
 .autocomplete-results {
   position: absolute;
   z-index: 10;

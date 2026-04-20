@@ -7,4 +7,4 @@
 | 3 | done | Seasonality Chart |
 | 4 | done | Photo Gallery |
 | 5 | done | Bookmarks & Offline |
-| 6 | pending | Polish & Deploy |
+| 6 | done | Polish & Deploy |

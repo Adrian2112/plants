@@ -10,6 +10,7 @@ export default class extends Controller {
   show({ detail: { taxon } }) {
     this.element.style.display = ""
     this.render(taxon)
+    document.title = `${taxon.preferred_common_name || taxon.name} — PlantScope`
   }
 
   render(taxon) {

@@ -1,5 +1,6 @@
 import { Application } from "@hotwired/stimulus"
-import "@hotwired/turbo"
+import * as Turbo from "@hotwired/turbo"
+Turbo.session.drive = false
 
 import SearchController from "./controllers/search_controller.js"
 import PlantController from "./controllers/plant_controller.js"

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found — PlantScope</title>
+  <script>
+    // GitHub Pages SPA redirect: rewrite path to query param
+    var path = window.location.pathname
+    if (path !== "/" && path !== "/index.html") {
+      window.location.replace("/" + window.location.search + window.location.hash)
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1/css/bulma.min.css">
+  <link rel="stylesheet" href="./css/app.css">
+</head>
+<body>
+  <section class="section">
+    <div class="container has-text-centered">
+      <h1 class="title">Page not found</h1>
+      <p class="subtitle">The page you're looking for doesn't exist.</p>
+      <a href="/" class="button is-primary">Go to PlantScope</a>
+    </div>
+  </section>
+</body>
+</html>
