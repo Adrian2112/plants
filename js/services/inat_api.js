@@ -1,7 +1,7 @@
 const BASE = "https://api.inaturalist.org/v1"
 
 export async function searchTaxa(query) {
-  const res = await fetch(`${BASE}/taxa/autocomplete?q=${encodeURIComponent(query)}&per_page=8`)
+  const res = await fetch(`${BASE}/taxa/autocomplete?q=${encodeURIComponent(query)}&per_page=8&taxon_id=47126`)
   if (!res.ok) throw new Error("Search failed")
   const data = await res.json()
   return data.results

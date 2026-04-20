@@ -9,4 +9,4 @@
 | 5 | done | Add sticky section nav/index (jump to Seasonality, Photos, Ethnobotany, etc.) |
 | 6 | done | Fix Ethnobotany "Add note" form — currently not showing |
 | 7 | done | Back button should preserve previously viewed taxon (browser history) |
-| 8 | pending | Restrict search to plants only (add taxon filter to API calls) |
+| 8 | done | Restrict search to plants only (add taxon filter to API calls) |
