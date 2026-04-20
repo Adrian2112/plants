@@ -8,6 +8,7 @@ import SeasonalityController from "./controllers/seasonality_controller.js"
 import GalleryController from "./controllers/gallery_controller.js"
 import BookmarkController from "./controllers/bookmark_controller.js"
 import NotesController from "./controllers/notes_controller.js"
+import MapController from "./controllers/map_controller.js"
 
 const app = Application.start()
 app.register("search", SearchController)
@@ -16,6 +17,7 @@ app.register("seasonality", SeasonalityController)
 app.register("gallery", GalleryController)
 app.register("bookmark", BookmarkController)
 app.register("notes", NotesController)
+app.register("map", MapController)
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/sw.js").catch(() => {})

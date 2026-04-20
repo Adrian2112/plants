@@ -11,6 +11,7 @@ const STATIC_ASSETS = [
   "/js/controllers/gallery_controller.js",
   "/js/controllers/bookmark_controller.js",
   "/js/controllers/notes_controller.js",
+  "/js/controllers/map_controller.js",
   "/js/services/inat_api.js",
   "/js/services/storage_service.js",
   "/js/services/cache_service.js",

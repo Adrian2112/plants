@@ -14,13 +14,15 @@
   <link rel="preconnect" href="https://inaturalist-open-data.s3.amazonaws.com">
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9/dist/leaflet.min.css">
   <link rel="stylesheet" href="./css/app.css">
 
   <script type="importmap">
   {
     "imports": {
       "@hotwired/turbo": "https://cdn.jsdelivr.net/npm/@hotwired/turbo@8/dist/turbo.es2017-esm.js",
-      "@hotwired/stimulus": "https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3/dist/stimulus.js"
+      "@hotwired/stimulus": "https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3/dist/stimulus.js",
+      "leaflet": "https://cdn.jsdelivr.net/npm/leaflet@1.9/dist/leaflet-src.esm.js"
     }
   }
   </script>
@@ -74,6 +76,7 @@
 
       <nav class="section-nav" id="section-nav" style="display:none;">
         <a href="#section-seasonality">Seasonality</a>
+        <a href="#section-map">Distribution</a>
         <a href="#section-ethnobotany">Ethnobotany</a>
         <a href="#section-photos">Photos</a>
       </nav>
@@ -93,6 +96,13 @@
           </div>
           <div data-seasonality-target="chart"></div>
           <p class="has-text-grey is-size-7 mt-2" data-seasonality-target="empty" style="display:none;"></p>
+        </div>
+      </div>
+
+      <div id="section-map" data-controller="map" data-action="search:loaded@document->map#show">
+        <div class="box mt-4">
+          <h2 class="title is-5 mb-3">Distribution</h2>
+          <div data-map-target="container" style="height:300px;border-radius:4px;"></div>
         </div>
       </div>
 
