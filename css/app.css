@@ -1,27 +1,49 @@
 :root {
-  --primary: #2E7D32;
-  --primary-light: #A5D6A7;
-  --background: #FAFAFA;
-  --surface: #FFFFFF;
-  --text: #212121;
-  --text-light: #757575;
-  --accent: #FF8F00;
+  --bulma-scheme-h: 150;
+  --bulma-scheme-s: 10%;
+  --primary: #4CAF50;
+  --primary-light: #81C784;
+  --primary-dark: #2E7D32;
+  --background: #1a1a2e;
+  --surface: #16213e;
+  --surface-light: #1f2b47;
+  --text: #e8e8e8;
+  --text-secondary: #a0aec0;
+  --text-muted: #6b7a8d;
+  --accent: #FF9800;
+  --border: #2d3a52;
 }
 
-html {
-  background-color: var(--background);
-}
-
-.navbar {
-  background-color: var(--surface);
-}
-
-.navbar-brand .navbar-item {
-  color: var(--primary);
+html, html[data-theme="dark"], html[data-theme="light"] {
+  background-color: var(--background) !important;
+  color-scheme: dark;
+  --bulma-body-background-color: var(--background);
+  --bulma-scheme-main: var(--background);
+  --bulma-scheme-main-bis: var(--surface);
+  --bulma-scheme-main-ter: var(--surface-light);
+  --bulma-text: var(--text);
+  --bulma-text-strong: var(--text);
 }
 
 body {
   padding-top: 3.25rem;
+  color: var(--text);
+}
+
+html[data-theme="dark"] nav.navbar,
+html[data-theme="dark"] .navbar {
+  --bulma-navbar-background-color: #16213e !important;
+  background-color: #16213e !important;
+  border-bottom: 1px solid #2d3a52;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3) !important;
+}
+
+.navbar-brand .navbar-item {
+  color: var(--primary) !important;
+}
+
+.navbar-item {
+  color: var(--text-secondary) !important;
 }
 
 .title, .subtitle {
@@ -29,14 +51,68 @@ body {
   word-break: break-word;
 }
 
+.title {
+  color: var(--text) !important;
+}
+
+.subtitle {
+  color: var(--text-secondary) !important;
+}
+
+.input, .textarea, .select select {
+  background-color: var(--surface-light) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+.input::placeholder, .textarea::placeholder {
+  color: var(--text-muted) !important;
+}
+
+.box {
+  background-color: var(--surface) !important;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+}
+
+.button.is-outlined {
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+}
+
+.button.is-outlined:hover {
+  background-color: var(--primary) !important;
+  color: white !important;
+}
+
+.button.is-success {
+  background-color: var(--primary-dark) !important;
+  color: white !important;
+}
+
+.button.is-small.is-text {
+  color: var(--text-secondary) !important;
+}
+
+.notification.is-danger.is-light {
+  background-color: #3b1c1c !important;
+  color: #ff8a80 !important;
+}
+
+a:not(.button):not(.navbar-item):not(.dropdown-item) {
+  color: var(--primary-light);
+}
+
+/* Autocomplete */
+
 .autocomplete-results {
   position: absolute;
   z-index: 10;
   width: 100%;
   background: var(--surface);
-  border: 1px solid #dbdbdb;
+  border: 1px solid var(--border);
   border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
   max-height: 320px;
   overflow-y: auto;
   display: none;
@@ -54,12 +130,22 @@ body {
 }
 
 .autocomplete-results .dropdown-item:hover {
-  background: #f5f5f5;
+  background: var(--surface-light);
+}
+
+.autocomplete-results .dropdown-item strong {
+  color: var(--text);
+}
+
+.autocomplete-results .dropdown-item small {
+  color: var(--text-secondary) !important;
 }
 
 .field {
   position: relative;
 }
+
+/* Seasonality */
 
 .seasonality-row {
   display: flex;
@@ -76,24 +162,29 @@ body {
   background-color: var(--accent);
 }
 
+.seasonality-row.is-current .seasonality-label,
+.seasonality-row.is-current .seasonality-value {
+  color: var(--accent);
+}
+
 .seasonality-label {
   width: 2rem;
   font-size: 0.8rem;
-  color: var(--text-light);
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 
 .seasonality-bar-track {
   flex: 1;
   height: 1rem;
-  background: #f0f0f0;
+  background: var(--surface-light);
   border-radius: 4px;
   overflow: hidden;
 }
 
 .seasonality-bar {
   height: 100%;
-  background-color: var(--primary-light);
+  background-color: var(--primary);
   border-radius: 4px;
   transition: width 0.4s ease-out;
 }
@@ -102,16 +193,18 @@ body {
   width: 2.5rem;
   font-size: 0.75rem;
   text-align: right;
-  color: var(--text-light);
+  color: var(--text-muted);
   flex-shrink: 0;
 }
+
+/* Toast */
 
 .toast {
   position: fixed;
   bottom: 1rem;
   left: 50%;
   transform: translateX(-50%) translateY(100%);
-  background: #333;
+  background: var(--primary-dark);
   color: white;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -127,6 +220,8 @@ body {
   opacity: 1;
 }
 
+/* Gallery */
+
 .gallery-tabs ul {
   flex-wrap: nowrap;
   overflow-x: auto;
@@ -136,6 +231,14 @@ body {
 .gallery-tabs li a {
   white-space: nowrap;
   font-size: 0.8rem;
+  color: var(--text-secondary) !important;
+  border-color: var(--border) !important;
+}
+
+.gallery-tabs li.is-active a {
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: white !important;
 }
 
 .gallery-grid {
@@ -155,7 +258,7 @@ body {
 .gallery-item {
   aspect-ratio: 1;
   overflow: hidden;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
 }
 
@@ -168,7 +271,7 @@ body {
 }
 
 .gallery-item.skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, var(--surface-light) 25%, var(--border) 50%, var(--surface-light) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -181,6 +284,8 @@ body {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* Lightbox */
 
 .lightbox-content {
   position: relative;
@@ -228,4 +333,43 @@ body {
   color: white;
   font-size: 0.75rem;
   text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+/* Bookmarks page */
+
+.media-content a {
+  color: var(--text) !important;
+}
+
+.media-content small.has-text-grey {
+  color: var(--text-secondary) !important;
+}
+
+.tag.is-info.is-light {
+  background-color: rgba(76, 175, 80, 0.15) !important;
+  color: var(--primary-light) !important;
+}
+
+/* Plant info text */
+
+.has-text-grey {
+  color: var(--text-secondary) !important;
+}
+
+.has-text-grey-light {
+  color: var(--text-muted) !important;
+}
+
+p, .content {
+  color: var(--text);
+}
+
+/* Ethnobotany notes */
+
+.notes-card {
+  background-color: var(--surface-light);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
 }
