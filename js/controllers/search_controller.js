@@ -7,18 +7,18 @@ export default class extends Controller {
 
   connect() {
     this.debounceTimer = null
-    this.checkUrlParams()
-    window.addEventListener("popstate", () => this.checkUrlParams())
+    this.checkUrlParams(false)
+    window.addEventListener("popstate", () => this.checkUrlParams(false))
   }
 
-  async checkUrlParams() {
+  async checkUrlParams(addToHistory = false) {
     const parsed = getUrlParams()
     if (!parsed) return
     if (parsed.type === "error") {
       this.showError(parsed.message)
       return
     }
-    await this.resolve(parsed)
+    await this.resolve(parsed, addToHistory)
   }
 
   onInput() {
@@ -83,10 +83,10 @@ export default class extends Controller {
     const taxonId = event.currentTarget.dataset.taxonId
     this.clearResults()
     this.inputTarget.value = ""
-    await this.resolve({ type: "taxon_id", value: taxonId })
+    await this.resolve({ type: "taxon_id", value: taxonId }, true)
   }
 
-  async resolve(parsed) {
+  async resolve(parsed, addToHistory = true) {
     this.clearError()
     this.dispatch("loading")
 
@@ -99,10 +99,12 @@ export default class extends Controller {
       }
 
       if (taxon) {
-        const url = new URL(window.location)
-        url.searchParams.set("taxon_id", taxon.id)
-        url.searchParams.delete("url")
-        window.history.pushState({ taxonId: taxon.id }, "", url)
+        if (addToHistory) {
+          const url = new URL(window.location)
+          url.searchParams.set("taxon_id", taxon.id)
+          url.searchParams.delete("url")
+          window.history.pushState({ taxonId: taxon.id }, "", url)
+        }
 
         this.dispatch("loaded", { detail: { taxon } })
       }
