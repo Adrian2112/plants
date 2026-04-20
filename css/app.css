@@ -101,6 +101,27 @@ body {
   flex-shrink: 0;
 }
 
+.toast {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(100%);
+  background: #333;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  z-index: 100;
+  opacity: 0;
+  transition: transform 0.3s, opacity 0.3s;
+  pointer-events: none;
+}
+
+.toast.is-active {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
 .gallery-tabs ul {
   flex-wrap: nowrap;
   overflow-x: auto;
