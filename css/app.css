@@ -1,0 +1,25 @@
+:root {
+  --primary: #2E7D32;
+  --primary-light: #A5D6A7;
+  --background: #FAFAFA;
+  --surface: #FFFFFF;
+  --text: #212121;
+  --text-light: #757575;
+  --accent: #FF8F00;
+}
+
+html {
+  background-color: var(--background);
+}
+
+.navbar {
+  background-color: var(--surface);
+}
+
+.navbar-brand .navbar-item {
+  color: var(--primary);
+}
+
+body {
+  padding-top: 3.25rem;
+}
