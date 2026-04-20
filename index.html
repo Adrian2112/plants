@@ -76,6 +76,31 @@
           <p class="has-text-grey is-size-7 mt-2" data-seasonality-target="empty" style="display:none;"></p>
         </div>
       </div>
+
+      <div data-controller="gallery" data-action="search:loaded@document->gallery#show">
+        <div class="box mt-4">
+          <h2 class="title is-5 mb-3">Photos</h2>
+          <div class="tabs is-small is-toggle gallery-tabs">
+            <ul data-gallery-target="tabs"></ul>
+          </div>
+          <div class="gallery-grid" data-gallery-target="grid"></div>
+          <p class="has-text-grey is-size-7 mt-2" data-gallery-target="empty" style="display:none;"></p>
+          <div class="has-text-centered mt-3" data-gallery-target="loadMore" style="display:none;">
+            <a class="button is-small is-outlined" data-action="click->gallery#onLoadMore">Load more</a>
+          </div>
+        </div>
+
+        <div class="modal" data-gallery-target="lightbox">
+          <div class="modal-background" data-action="click->gallery#closeLightbox"></div>
+          <div class="modal-content lightbox-content">
+            <div class="lightbox-nav lightbox-prev" data-action="click->gallery#prevPhoto">‹</div>
+            <img data-gallery-target="lightboxImg" src="" alt="Photo">
+            <div class="lightbox-nav lightbox-next" data-action="click->gallery#nextPhoto">›</div>
+            <p class="lightbox-caption" data-gallery-target="lightboxCaption"></p>
+          </div>
+          <button class="modal-close is-large" aria-label="close" data-action="click->gallery#closeLightbox"></button>
+        </div>
+      </div>
     </div>
   </main>
 </body>

@@ -24,6 +24,30 @@ export async function getHistogram(taxonId, termId, termValueId) {
   return data.results.month_of_year
 }
 
+export async function getObservationPhotos(taxonId, { termId, termValueId, page = 1, perPage = 30 } = {}) {
+  let url = `${BASE}/observations?taxon_id=${taxonId}&photos=true&per_page=${perPage}&page=${page}&quality_grade=research&order_by=votes`
+  if (termId) url += `&term_id=${termId}`
+  if (termValueId) url += `&term_value_id=${termValueId}`
+  const res = await fetch(url)
+  if (!res.ok) throw new Error("Failed to load photos")
+  const data = await res.json()
+  const photos = []
+  for (const obs of data.results) {
+    for (const p of obs.photos || []) {
+      photos.push({
+        id: p.id,
+        small: p.url?.replace("square", "small"),
+        medium: p.url?.replace("square", "medium"),
+        large: p.url?.replace("square", "large"),
+        attribution: p.attribution,
+        observer: obs.user?.login,
+        date: obs.observed_on,
+      })
+    }
+  }
+  return { photos, totalResults: data.total_results, page }
+}
+
 export async function getObservation(id) {
   const res = await fetch(`${BASE}/observations/${id}`)
   if (!res.ok) throw new Error("Failed to load observation")
