@@ -28,6 +28,39 @@ html, html[data-theme="dark"], html[data-theme="light"] {
 body {
   padding-top: 3.25rem;
   color: var(--text);
+  scroll-behavior: smooth;
+}
+
+.section-nav {
+  position: sticky;
+  top: 3.25rem;
+  z-index: 5;
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  margin-bottom: 0.5rem;
+  background: var(--background);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.section-nav a {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  background: var(--surface-light);
+  color: var(--text-secondary) !important;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  transition: background 0.2s, color 0.2s;
+}
+
+.section-nav a:hover {
+  background: var(--primary);
+  color: white !important;
+  border-color: var(--primary);
 }
 
 html[data-theme="dark"] nav.navbar,

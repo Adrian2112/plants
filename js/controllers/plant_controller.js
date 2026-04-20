@@ -11,6 +11,8 @@ export default class extends Controller {
     this.element.style.display = ""
     this.render(taxon)
     document.title = `${taxon.preferred_common_name || taxon.name} — PlantScope`
+    const nav = document.getElementById("section-nav")
+    if (nav) nav.style.display = ""
   }
 
   render(taxon) {

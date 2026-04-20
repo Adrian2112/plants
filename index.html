@@ -72,7 +72,13 @@
         <div class="toast" data-bookmark-target="toast"></div>
       </div>
 
-      <div data-controller="seasonality" data-action="search:loaded@document->seasonality#show">
+      <nav class="section-nav" id="section-nav" style="display:none;">
+        <a href="#section-seasonality">Seasonality</a>
+        <a href="#section-ethnobotany">Ethnobotany</a>
+        <a href="#section-photos">Photos</a>
+      </nav>
+
+      <div id="section-seasonality" data-controller="seasonality" data-action="search:loaded@document->seasonality#show">
         <div class="box mt-4">
           <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
             <h2 class="title is-5 mb-0">Seasonality</h2>
@@ -90,7 +96,7 @@
         </div>
       </div>
 
-      <div data-controller="notes" data-action="search:loaded@document->notes#show">
+      <div id="section-ethnobotany" data-controller="notes" data-action="search:loaded@document->notes#show">
         <div class="box mt-4">
           <h2 class="title is-5 mb-3">Ethnobotany</h2>
           <div data-notes-target="list"></div>
@@ -111,7 +117,7 @@
         </div>
       </div>
 
-      <div data-controller="gallery" data-action="search:loaded@document->gallery#show">
+      <div id="section-photos" data-controller="gallery" data-action="search:loaded@document->gallery#show">
         <div class="box mt-4">
           <h2 class="title is-5 mb-3">Photos</h2>
           <div class="tabs is-small is-toggle gallery-tabs">
