@@ -63,7 +63,6 @@ export default class extends Controller {
           <div class="seasonality-bar-track">
             <div class="seasonality-bar" style="width:${likelihood}%"></div>
           </div>
-          <span class="seasonality-value">${likelihood}%</span>
         </div>
       `
     }).join("")
