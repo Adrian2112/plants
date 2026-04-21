@@ -1,4 +1,4 @@
-const CACHE_NAME = "plantscope-v4"
+const CACHE_NAME = "plantscope-v5"
 const API_CACHE = "plantscope-api-v1"
 const IMG_CACHE = "plantscope-img-v1"
 const IMG_CACHE_LIMIT = 200
@@ -30,11 +30,13 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (url.origin === location.origin) {
-    const update = revalidate(request, CACHE_NAME)
-    event.waitUntil(update)
-    event.respondWith(
-      caches.match(request).then(cached => cached || update)
-    )
+    if (request.destination === "document") {
+      event.respondWith(networkFirst(request, CACHE_NAME))
+    } else {
+      const update = revalidate(request, CACHE_NAME)
+      event.waitUntil(update)
+      event.respondWith(caches.match(request).then(cached => cached || update))
+    }
     return
   }
 
@@ -61,6 +63,18 @@ async function cacheFirstWithTTL(request, cacheName, ttl) {
     await cache.put(request, stamped.clone())
     return stamped
   } catch {
+    return cached || new Response("Offline", { status: 503 })
+  }
+}
+
+async function networkFirst(request, cacheName) {
+  const cache = await caches.open(cacheName)
+  try {
+    const res = await fetch(request)
+    if (res.ok) await cache.put(request, res.clone())
+    return res
+  } catch {
+    const cached = await cache.match(request)
     return cached || new Response("Offline", { status: 503 })
   }
 }
