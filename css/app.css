@@ -84,16 +84,6 @@ body {
   }
 }
 
-/* Saved count badge in navbar */
-.saved-count {
-  background-color: var(--primary) !important;
-  color: white !important;
-  font-size: 0.65rem !important;
-  height: 1.25rem !important;
-  min-width: 1.25rem !important;
-  padding: 0 0.3rem !important;
-  vertical-align: middle;
-}
 
 /* Bookmark cards */
 
