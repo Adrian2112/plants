@@ -30,7 +30,8 @@ export default class extends Controller {
     const bookmarks = await getAllBookmarks()
     const n = bookmarks.length
     this.savedCountTargets.forEach(el => {
-      el.textContent = n > 0 ? `${n} saved` : "Saved"
+      el.textContent = n
+      el.style.display = n > 0 ? "" : "none"
     })
   }
 
