@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import { saveBookmark, removeBookmark, isBookmarked, getAllBookmarks, getNoteCountForTaxon } from "../services/storage_service.js"
+import { prefetchForOffline } from "../services/offline_service.js"
 
 export default class extends Controller {
   static targets = ["star", "list", "toast", "savedCount", "panel", "filterInput"]
@@ -45,6 +46,7 @@ export default class extends Controller {
       await saveBookmark(this.taxon)
       this.saved = true
       this.showToast("Plant saved for offline viewing")
+      prefetchForOffline(this.taxon.id)
     }
     this.updateStar()
     this.updateCount()
@@ -57,6 +59,7 @@ export default class extends Controller {
     this.updateStar()
     this.updateCount()
     this.showToast("Plant saved to bookmarks")
+    prefetchForOffline(taxon.id)
   }
 
   showToast(message) {

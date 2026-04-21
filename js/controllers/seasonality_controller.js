@@ -26,7 +26,7 @@ export default class extends Controller {
   }
 
   requestLocation() {
-    if (!navigator.geolocation) return
+    if (!navigator.geolocation || !navigator.onLine) return
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
         this.coords = { lat: coords.latitude, lng: coords.longitude }

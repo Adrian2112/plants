@@ -23,7 +23,7 @@ self.addEventListener("fetch", (event) => {
     return
   }
 
-  if (request.destination === "image" && (url.hostname.includes("inaturalist") || url.hostname.includes("static.inaturalist"))) {
+  if (url.hostname.includes("inaturalist-open-data") || url.hostname.includes("static.inaturalist")) {
     event.respondWith(cacheFirst(request, IMG_CACHE, IMG_CACHE_LIMIT))
     return
   }
