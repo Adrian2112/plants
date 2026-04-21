@@ -96,6 +96,12 @@ export default class extends Controller {
     await this.resolve({ type: "taxon_id", value: taxonId }, true)
   }
 
+  async navigateToTaxon(event) {
+    event.preventDefault()
+    const taxonId = event.currentTarget.dataset.taxonId
+    await this.resolve({ type: "taxon_id", value: taxonId }, true)
+  }
+
   async resolve(parsed, addToHistory = true) {
     this.clearError()
     this.dispatch("loading")

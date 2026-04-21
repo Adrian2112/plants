@@ -107,7 +107,7 @@ export default class extends Controller {
 
     this.listTarget.innerHTML = items.map(b => `
       <div class="bookmark-item">
-        <a class="bookmark-link" href="/?taxon_id=${b.taxon_id}">
+        <a class="bookmark-link" href="/?taxon_id=${b.taxon_id}" data-action="click->search#navigateToTaxon" data-taxon-id="${b.taxon_id}">
           <div class="bookmark-thumb">
             ${b.thumbnail_url
               ? `<img src="${b.thumbnail_url}" alt="${b.common_name}">`
