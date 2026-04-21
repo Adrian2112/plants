@@ -11,6 +11,14 @@ export default class extends Controller {
     window.addEventListener("popstate", () => this.checkUrlParams(false))
   }
 
+  get navigateTo() {
+    return this.element.dataset.searchNavigateTo || null
+  }
+
+  get requiresTaxon() {
+    return this.element.dataset.searchRequiresTaxon != null
+  }
+
   // Returns the currently visible input (navbar on desktop, main on mobile)
   get activeInput() {
     return this.inputTargets.find(el => el.offsetParent !== null) ?? this.inputTargets[0]
@@ -23,9 +31,16 @@ export default class extends Controller {
 
   async checkUrlParams(addToHistory = false) {
     const parsed = getUrlParams()
-    if (!parsed) return
+    if (!parsed) {
+      if (this.requiresTaxon) window.location.href = "/"
+      return
+    }
     if (parsed.type === "error") {
       this.showError(parsed.message)
+      return
+    }
+    if (this.navigateTo) {
+      window.location.href = `${this.navigateTo}${window.location.search}`
       return
     }
     await this.resolve(parsed, addToHistory)
@@ -93,12 +108,10 @@ export default class extends Controller {
     const taxonId = event.currentTarget.dataset.taxonId
     this.clearResults()
     this.activeInput.value = ""
-    await this.resolve({ type: "taxon_id", value: taxonId }, true)
-  }
-
-  async navigateToTaxon(event) {
-    event.preventDefault()
-    const taxonId = event.currentTarget.dataset.taxonId
+    if (this.navigateTo) {
+      window.location.href = `${this.navigateTo}?taxon_id=${taxonId}`
+      return
+    }
     await this.resolve({ type: "taxon_id", value: taxonId }, true)
   }
 

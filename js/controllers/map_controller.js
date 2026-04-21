@@ -8,7 +8,6 @@ export default class extends Controller {
   static targets = ["container"]
 
   connect() {
-    this.element.style.display = "none"
     this.map = null
     this.heatmapLayer = null
     this.taxonId = null
@@ -16,7 +15,6 @@ export default class extends Controller {
 
   async show({ detail: { taxon } }) {
     this.taxonId = taxon.id
-    this.element.style.display = ""
 
     const L = await import("leaflet")
 

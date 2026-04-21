@@ -5,14 +5,12 @@ export default class extends Controller {
   static targets = ["list", "form", "formText", "formUrl", "addBtn", "empty"]
 
   connect() {
-    this.element.style.display = "none"
     this.taxon = null
     this.editingId = null
   }
 
   async show({ detail: { taxon } }) {
     this.taxon = taxon
-    this.element.style.display = ""
     this.hideForm()
     await this.renderNotes()
   }

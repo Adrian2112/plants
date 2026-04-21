@@ -3,12 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["container"]
 
-  connect() {
-    this.element.style.display = "none"
-  }
-
   show({ detail: { taxon } }) {
-    this.element.style.display = ""
     this.render(taxon)
     document.title = `${taxon.preferred_common_name || taxon.name} — PlantScope`
     const nav = document.getElementById("section-nav")

@@ -14,7 +14,6 @@ export default class extends Controller {
   static targets = ["chart", "filter", "empty", "locationToggle"]
 
   connect() {
-    this.element.style.display = "none"
     this.taxonId = null
     this.coords = null
     this.nearMe = false
@@ -22,7 +21,6 @@ export default class extends Controller {
 
   show({ detail: { taxon } }) {
     this.taxonId = taxon.id
-    this.element.style.display = ""
     this.loadData()
     this.requestLocation()
   }

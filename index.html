@@ -29,7 +29,7 @@
 
   <script type="module" src="./js/application.js"></script>
 </head>
-<body data-controller="search bookmark">
+<body data-controller="search bookmark" data-search-navigate-to="taxon.html">
   <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation" style="background-color:#16213e;border-bottom:1px solid #2d3a52;">
     <div class="container">
       <div class="navbar-brand">
@@ -67,8 +67,7 @@
   </nav>
 
   <main class="section pt-5">
-    <div class="container"
-         data-action="search:loaded@document->bookmark#show notes:autobookmarked@document->bookmark#show">
+    <div class="container">
 
       <!-- Mobile search (hidden on desktop) -->
       <div class="field is-hidden-desktop mb-3">
@@ -84,7 +83,7 @@
 
       <div data-search-target="error"></div>
 
-      <!-- Saved plants panel: visible by default, hidden when a plant loads -->
+      <!-- Saved plants panel -->
       <div data-bookmark-target="panel" class="mt-4">
         <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
           <h2 class="title is-5 mb-0">
@@ -103,94 +102,6 @@
         <div class="bookmarks-list" data-bookmark-target="list"></div>
       </div>
 
-      <div data-controller="plant" data-action="search:loaded@document->plant#show">
-        <div data-plant-target="container"></div>
-      </div>
-
-      <div class="toast" data-bookmark-target="toast"></div>
-
-      <nav class="section-nav" id="section-nav" style="display:none;">
-        <a href="#section-seasonality">Seasonality</a>
-        <a href="#section-map">Distribution</a>
-        <a href="#section-ethnobotany">Ethnobotany</a>
-        <a href="#section-photos">Photos</a>
-      </nav>
-
-      <div class="seasonality-map-row mt-4">
-        <div id="section-seasonality" data-controller="seasonality" data-action="search:loaded@document->seasonality#show">
-          <div class="box">
-            <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
-              <h2 class="title is-5 mb-0">Seasonality</h2>
-              <div class="is-flex is-align-items-center" style="gap:0.5rem;">
-                <div data-seasonality-target="locationToggle"></div>
-                <div class="select is-small">
-                  <select data-seasonality-target="filter" data-action="change->seasonality#onFilterChange">
-                    <option>All</option>
-                    <option>Flowering</option>
-                    <option>Fruiting</option>
-                    <option>Budding</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div data-seasonality-target="chart"></div>
-            <p class="has-text-grey is-size-7 mt-2" data-seasonality-target="empty" style="display:none;"></p>
-          </div>
-        </div>
-
-        <div id="section-map" data-controller="map" data-action="search:loaded@document->map#show">
-          <div class="box">
-            <h2 class="title is-5 mb-3">Distribution</h2>
-            <div data-map-target="container" style="height:300px;border-radius:4px;"></div>
-          </div>
-        </div>
-      </div>
-
-      <div id="section-ethnobotany" data-controller="notes" data-action="search:loaded@document->notes#show">
-        <div class="box mt-4">
-          <h2 class="title is-5 mb-3">Ethnobotany</h2>
-          <div data-notes-target="list"></div>
-          <p class="has-text-grey is-size-7" data-notes-target="empty">No ethnobotanical notes yet. Add one below.</p>
-          <button class="button is-small is-outlined mt-2" data-notes-target="addBtn" data-action="click->notes#showForm">+ Add note</button>
-          <form data-notes-target="form" data-action="submit->notes#onSave" style="display:none;" class="mt-3">
-            <div class="field">
-              <textarea class="textarea is-small" placeholder="Note text..." data-notes-target="formText" required></textarea>
-            </div>
-            <div class="field">
-              <input class="input is-small" type="url" placeholder="Reference URL (optional)" data-notes-target="formUrl">
-            </div>
-            <div class="field is-grouped">
-              <button type="submit" class="button is-small is-success">Save</button>
-              <button type="button" class="button is-small" data-action="click->notes#hideForm">Cancel</button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <div id="section-photos" data-controller="gallery" data-action="search:loaded@document->gallery#show">
-        <div class="box mt-4">
-          <h2 class="title is-5 mb-3">Photos</h2>
-          <div class="tabs is-small is-toggle gallery-tabs">
-            <ul data-gallery-target="tabs"></ul>
-          </div>
-          <div class="gallery-grid" data-gallery-target="grid"></div>
-          <p class="has-text-grey is-size-7 mt-2" data-gallery-target="empty" style="display:none;"></p>
-          <div class="has-text-centered mt-3" data-gallery-target="loadMore" style="display:none;">
-            <a class="button is-small is-outlined" data-action="click->gallery#onLoadMore">Load more</a>
-          </div>
-        </div>
-
-        <div class="modal" data-gallery-target="lightbox">
-          <div class="modal-background" data-action="click->gallery#closeLightbox"></div>
-          <div class="modal-content lightbox-content">
-            <div class="lightbox-nav lightbox-prev" data-action="click->gallery#prevPhoto">‹</div>
-            <img data-gallery-target="lightboxImg" src="" alt="Photo">
-            <div class="lightbox-nav lightbox-next" data-action="click->gallery#nextPhoto">›</div>
-            <p class="lightbox-caption" data-gallery-target="lightboxCaption"></p>
-          </div>
-          <button class="modal-close is-large" aria-label="close" data-action="click->gallery#closeLightbox"></button>
-        </div>
-      </div>
     </div>
   </main>
 </body>

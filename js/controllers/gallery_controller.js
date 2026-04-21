@@ -16,7 +16,6 @@ export default class extends Controller {
   static targets = ["tabs", "grid", "empty", "loadMore", "lightbox", "lightboxImg", "lightboxCaption"]
 
   connect() {
-    this.element.style.display = "none"
     this.taxonId = null
     this.currentFilter = 0
     this.page = 1
@@ -31,7 +30,6 @@ export default class extends Controller {
 
   show({ detail: { taxon } }) {
     this.taxonId = taxon.id
-    this.element.style.display = ""
     this.renderTabs()
     this.switchFilter(0)
   }
