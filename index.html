@@ -99,31 +99,33 @@
         <a href="#section-photos">Photos</a>
       </nav>
 
-      <div id="section-seasonality" data-controller="seasonality" data-action="search:loaded@document->seasonality#show">
-        <div class="box mt-4">
-          <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
-            <h2 class="title is-5 mb-0">Seasonality</h2>
-            <div class="is-flex is-align-items-center" style="gap:0.5rem;">
-              <div data-seasonality-target="locationToggle"></div>
-              <div class="select is-small">
-                <select data-seasonality-target="filter" data-action="change->seasonality#onFilterChange">
-                  <option>All</option>
-                  <option>Flowering</option>
-                  <option>Fruiting</option>
-                  <option>Budding</option>
-                </select>
+      <div class="seasonality-map-row mt-4">
+        <div id="section-seasonality" data-controller="seasonality" data-action="search:loaded@document->seasonality#show">
+          <div class="box">
+            <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
+              <h2 class="title is-5 mb-0">Seasonality</h2>
+              <div class="is-flex is-align-items-center" style="gap:0.5rem;">
+                <div data-seasonality-target="locationToggle"></div>
+                <div class="select is-small">
+                  <select data-seasonality-target="filter" data-action="change->seasonality#onFilterChange">
+                    <option>All</option>
+                    <option>Flowering</option>
+                    <option>Fruiting</option>
+                    <option>Budding</option>
+                  </select>
+                </div>
               </div>
             </div>
+            <div data-seasonality-target="chart"></div>
+            <p class="has-text-grey is-size-7 mt-2" data-seasonality-target="empty" style="display:none;"></p>
           </div>
-          <div data-seasonality-target="chart"></div>
-          <p class="has-text-grey is-size-7 mt-2" data-seasonality-target="empty" style="display:none;"></p>
         </div>
-      </div>
 
-      <div id="section-map" data-controller="map" data-action="search:loaded@document->map#show">
-        <div class="box mt-4">
-          <h2 class="title is-5 mb-3">Distribution</h2>
-          <div data-map-target="container" style="height:300px;border-radius:4px;"></div>
+        <div id="section-map" data-controller="map" data-action="search:loaded@document->map#show">
+          <div class="box">
+            <h2 class="title is-5 mb-3">Distribution</h2>
+            <div data-map-target="container" style="height:300px;border-radius:4px;"></div>
+          </div>
         </div>
       </div>
 

@@ -71,6 +71,22 @@ body {
   .plant-meta .box {
     margin-top: 0 !important;
   }
+
+  #bookmark-section .button.is-fullwidth {
+    width: auto;
+    min-width: 220px;
+  }
+
+  .seasonality-map-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .seasonality-map-row > div {
+    margin-top: 0 !important;
+  }
 }
 
 /* Navbar search */
