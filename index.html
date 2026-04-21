@@ -29,39 +29,57 @@
 
   <script type="module" src="./js/application.js"></script>
 </head>
-<body>
+<body data-controller="search">
   <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation" style="background-color:#16213e;border-bottom:1px solid #2d3a52;">
-    <div class="navbar-brand">
-      <a class="navbar-item has-text-weight-bold" href="/" style="color:#4CAF50;">
-        <span class="icon mr-1"><span>🌿</span></span>
-        <span>PlantScope</span>
-      </a>
-      <a class="navbar-item is-hidden-desktop ml-auto" href="/bookmarks.html" style="color:#a0aec0;">
-        <span class="icon"><span>☆</span></span>
-        <span>Saved</span>
-      </a>
-    </div>
-    <div class="navbar-end is-hidden-touch">
-      <a class="navbar-item" href="/bookmarks.html" style="color:#a0aec0;">
-        <span class="icon"><span>☆</span></span>
-        <span>Saved</span>
-      </a>
+    <div class="container">
+      <div class="navbar-brand">
+        <a class="navbar-item has-text-weight-bold" href="/" style="color:#4CAF50;">
+          <span class="icon mr-1"><span>🌿</span></span>
+          <span>PlantScope</span>
+        </a>
+        <a class="navbar-item is-hidden-desktop ml-auto" href="/bookmarks.html" style="color:#a0aec0;">
+          <span class="icon"><span>☆</span></span>
+          <span>Saved</span>
+        </a>
+      </div>
+
+      <div class="navbar-menu">
+        <div class="navbar-item is-expanded px-4">
+          <div class="navbar-search-wrapper">
+            <div class="control has-icons-left">
+              <input class="input" type="text"
+                placeholder="Search plant or paste iNaturalist URL..."
+                data-search-target="input"
+                data-action="input->search#onInput">
+              <span class="icon is-left">🔍</span>
+            </div>
+            <div class="autocomplete-results" data-search-target="results"></div>
+          </div>
+        </div>
+        <div class="navbar-end">
+          <a class="navbar-item" href="/bookmarks.html" style="color:#a0aec0;">
+            <span class="icon"><span>☆</span></span>
+            <span>Saved</span>
+          </a>
+        </div>
+      </div>
     </div>
   </nav>
 
-  <main class="section pt-6">
-    <div class="container" data-controller="search" data-action="search:loaded->plant#show">
-      <div class="field">
+  <main class="section pt-5">
+    <div class="container">
+
+      <!-- Mobile search (hidden on desktop) -->
+      <div class="field is-hidden-desktop mb-3">
         <div class="control has-icons-left">
-          <input id="search-input" class="input" type="text"
+          <input class="input" type="text"
             placeholder="Search plant or paste iNaturalist URL..."
             data-search-target="input"
             data-action="input->search#onInput">
           <span class="icon is-left">🔍</span>
         </div>
       </div>
-
-      <div class="autocomplete-results" data-search-target="results"></div>
+      <div class="autocomplete-results is-hidden-desktop" data-search-target="results"></div>
 
       <div data-search-target="error"></div>
 
@@ -69,7 +87,7 @@
         <div data-plant-target="container"></div>
       </div>
 
-      <div data-controller="bookmark" data-action="search:loaded@document->bookmark#show notes:autobookmarked@document->bookmark#show" style="display:none;" id="bookmark-section" class="mt-5">
+      <div data-controller="bookmark" data-action="search:loaded@document->bookmark#show notes:autobookmarked@document->bookmark#show" style="display:none;" id="bookmark-section" class="mt-4">
         <button class="button is-outlined is-fullwidth mb-4" data-bookmark-target="button" data-action="click->bookmark#toggle" style="display:none;"></button>
         <div class="toast" data-bookmark-target="toast"></div>
       </div>

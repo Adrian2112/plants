@@ -27,30 +27,39 @@ export default class extends Controller {
       .map(a => a.name)
       .join(" › ")
 
+    const heroPhoto = photo ? `
+      <figure class="image is-3by2 plant-hero-image">
+        <img src="${photo.medium_url}" alt="${commonName}" style="object-fit:cover;border-radius:8px;">
+      </figure>
+    ` : ""
+
+    const aboutBox = summary ? `
+      <div class="box mt-4">
+        <h2 class="title is-5 mb-3">About</h2>
+        <p>${summary}</p>
+        ${wikiUrl ? `
+          <p class="mt-3">
+            <a href="${wikiUrl}" target="_blank" rel="noopener" class="is-size-7">
+              📖 View on Wikipedia →
+            </a>
+          </p>
+        ` : ""}
+      </div>
+    ` : ""
+
     this.containerTarget.innerHTML = `
-      ${photo ? `
-        <figure class="image is-3by2 mb-4">
-          <img src="${photo.medium_url}" alt="${commonName}" style="object-fit:cover;border-radius:8px;">
-        </figure>
-      ` : ""}
-
-      <h1 class="title is-3 mb-1">${commonName}</h1>
-      <p class="subtitle is-5 is-italic has-text-grey mb-2">${scientificName}</p>
-      ${ancestors ? `<p class="is-size-7 has-text-grey-light mb-4">${ancestors}</p>` : ""}
-
-      ${summary ? `
-        <div class="box">
-          <h2 class="title is-5 mb-3">About</h2>
-          <p>${summary}</p>
-          ${wikiUrl ? `
-            <p class="mt-3">
-              <a href="${wikiUrl}" target="_blank" rel="noopener" class="is-size-7">
-                📖 View on Wikipedia →
-              </a>
-            </p>
-          ` : ""}
+      <div class="plant-header">
+        <div class="plant-hero">
+          ${heroPhoto}
         </div>
-      ` : ""}
+        <div class="plant-meta">
+          <h1 class="title is-3 mb-1">${commonName}</h1>
+          <p class="subtitle is-5 is-italic has-text-grey mb-2">${scientificName}</p>
+          ${ancestors ? `<p class="is-size-7 has-text-grey-light mb-4">${ancestors}</p>` : ""}
+          <div class="is-hidden-touch">${aboutBox}</div>
+        </div>
+      </div>
+      <div class="is-hidden-desktop">${aboutBox}</div>
     `
   }
 }

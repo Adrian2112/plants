@@ -11,6 +11,16 @@ export default class extends Controller {
     window.addEventListener("popstate", () => this.checkUrlParams(false))
   }
 
+  // Returns the currently visible input (navbar on desktop, main on mobile)
+  get activeInput() {
+    return this.inputTargets.find(el => el.offsetParent !== null) ?? this.inputTargets[0]
+  }
+
+  // Returns the results dropdown associated with the visible input
+  get activeResults() {
+    return this.resultsTargets.find(el => el.offsetParent !== null) ?? this.resultsTargets[0]
+  }
+
   async checkUrlParams(addToHistory = false) {
     const parsed = getUrlParams()
     if (!parsed) return
@@ -23,7 +33,7 @@ export default class extends Controller {
 
   onInput() {
     clearTimeout(this.debounceTimer)
-    const value = this.inputTarget.value.trim()
+    const value = this.activeInput.value.trim()
     if (!value) {
       this.clearResults()
       return
@@ -59,12 +69,12 @@ export default class extends Controller {
   renderResults(results) {
     this.clearError()
     if (!results.length) {
-      this.resultsTarget.innerHTML = `<div class="dropdown-item">No plants found.</div>`
-      this.resultsTarget.classList.add("is-active")
+      this.activeResults.innerHTML = `<div class="dropdown-item">No plants found.</div>`
+      this.activeResults.classList.add("is-active")
       return
     }
 
-    this.resultsTarget.innerHTML = results.map(t => `
+    this.activeResults.innerHTML = results.map(t => `
       <a class="dropdown-item" data-action="click->search#selectResult" data-taxon-id="${t.id}">
         <div class="is-flex is-align-items-center">
           ${t.default_photo ? `<img src="${t.default_photo.square_url}" class="mr-2" style="width:32px;height:32px;border-radius:4px;object-fit:cover;">` : ""}
@@ -75,14 +85,14 @@ export default class extends Controller {
         </div>
       </a>
     `).join("")
-    this.resultsTarget.classList.add("is-active")
+    this.activeResults.classList.add("is-active")
   }
 
   async selectResult(event) {
     event.preventDefault()
     const taxonId = event.currentTarget.dataset.taxonId
     this.clearResults()
-    this.inputTarget.value = ""
+    this.activeInput.value = ""
     await this.resolve({ type: "taxon_id", value: taxonId }, true)
   }
 
@@ -134,7 +144,9 @@ export default class extends Controller {
   }
 
   clearResults() {
-    this.resultsTarget.innerHTML = ""
-    this.resultsTarget.classList.remove("is-active")
+    this.resultsTargets.forEach(el => {
+      el.innerHTML = ""
+      el.classList.remove("is-active")
+    })
   }
 }
