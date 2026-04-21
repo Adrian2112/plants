@@ -143,7 +143,16 @@ export default class extends Controller {
   showLightboxPhoto() {
     const photo = this.allPhotos[this.lightboxIndex]
     if (!photo) return
-    this.lightboxImgTarget.src = photo.large || photo.medium
+    const img = this.lightboxImgTarget
+    img.onerror = null
+
+    if (!navigator.onLine) {
+      img.src = photo.small
+    } else {
+      img.src = photo.large || photo.small
+      img.onerror = () => { img.onerror = null; img.src = photo.small }
+    }
+
     this.lightboxCaptionTarget.innerHTML = `
       <span>${photo.attribution || ""}</span>
       ${photo.date ? `<span class="ml-2">${photo.date}</span>` : ""}

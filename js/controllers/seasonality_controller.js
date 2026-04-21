@@ -40,7 +40,10 @@ export default class extends Controller {
     if (!navigator.geolocation || !navigator.onLine) return
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
-        this.coords = { lat: coords.latitude, lng: coords.longitude }
+        this.coords = {
+          lat: Math.round(coords.latitude * 100) / 100,
+          lng: Math.round(coords.longitude * 100) / 100,
+        }
         this.nearMe = true
         this.renderLocationToggle()
         this.loadData()
