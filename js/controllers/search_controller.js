@@ -31,8 +31,12 @@ export default class extends Controller {
 
   async checkUrlParams(addToHistory = false) {
     const parsed = getUrlParams()
+    console.log("[search] checkUrlParams", { parsed, navigateTo: this.navigateTo, requiresTaxon: this.requiresTaxon, search: window.location.search })
     if (!parsed) {
-      if (this.requiresTaxon) window.location.href = "/"
+      if (this.requiresTaxon) {
+        console.log("[search] no taxon in URL on taxon page → redirecting home")
+        window.location.href = "/"
+      }
       return
     }
     if (parsed.type === "error") {
@@ -40,6 +44,7 @@ export default class extends Controller {
       return
     }
     if (this.navigateTo) {
+      console.log("[search] navigating to", `${this.navigateTo}${window.location.search}`)
       window.location.href = `${this.navigateTo}${window.location.search}`
       return
     }
@@ -116,6 +121,7 @@ export default class extends Controller {
   }
 
   async resolve(parsed, addToHistory = true) {
+    console.log("[search] resolve", parsed)
     this.clearError()
     this.dispatch("loading")
 
@@ -135,6 +141,7 @@ export default class extends Controller {
           window.history.pushState({ taxonId: taxon.id }, "", url)
         }
 
+        console.log("[search] dispatching search:loaded for taxon", taxon.id)
         this.dispatch("loaded", { detail: { taxon } })
         if (window.location.hash) {
           setTimeout(() => {
@@ -142,8 +149,11 @@ export default class extends Controller {
             if (el) el.scrollIntoView({ behavior: "instant", block: "start" })
           }, 300)
         }
+      } else {
+        console.warn("[search] taxon resolved to null/undefined for", parsed)
       }
     } catch (e) {
+      console.error("[search] resolve error", e)
       this.showError(e.message)
     }
   }
