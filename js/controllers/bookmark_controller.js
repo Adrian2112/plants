@@ -2,13 +2,14 @@ import { Controller } from "@hotwired/stimulus"
 import { saveBookmark, removeBookmark, isBookmarked, getAllBookmarks, getNoteCountForTaxon } from "../services/storage_service.js"
 
 export default class extends Controller {
-  static targets = ["star", "list", "toast"]
+  static targets = ["star", "list", "toast", "savedCount"]
   static values = { page: Boolean }
 
   connect() {
     this.taxon = null
     this.saved = false
     if (this.pageValue && this.hasListTarget) this.renderList()
+    this.updateCount()
   }
 
   async show({ detail: { taxon } }) {
@@ -21,6 +22,15 @@ export default class extends Controller {
     if (!this.hasStarTarget) return
     this.starTarget.textContent = this.saved ? "★" : "☆"
     this.starTarget.classList.toggle("is-saved", this.saved)
+  }
+
+  async updateCount() {
+    const bookmarks = await getAllBookmarks()
+    const n = bookmarks.length
+    this.savedCountTargets.forEach(el => {
+      el.textContent = n
+      el.style.display = n > 0 ? "" : "none"
+    })
   }
 
   async toggle() {
@@ -36,6 +46,7 @@ export default class extends Controller {
       this.showToast("Plant saved for offline viewing")
     }
     this.updateStar()
+    this.updateCount()
   }
 
   async autoBookmark(taxon) {
@@ -43,6 +54,7 @@ export default class extends Controller {
     await saveBookmark(taxon)
     this.saved = true
     this.updateStar()
+    this.updateCount()
     this.showToast("Plant saved to bookmarks")
   }
 
