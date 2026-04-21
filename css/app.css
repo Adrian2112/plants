@@ -623,6 +623,13 @@ a:not(.button):not(.navbar-item):not(.dropdown-item) {
   100% { background-position: -200% 0; }
 }
 
+.skeleton-block {
+  background: linear-gradient(90deg, var(--surface-light) 25%, var(--border) 50%, var(--surface-light) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 6px;
+}
+
 /* Lightbox */
 
 .lightbox-content {
