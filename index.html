@@ -67,7 +67,9 @@
   </nav>
 
   <main class="section pt-5">
-    <div class="container">
+    <div class="container"
+         data-controller="bookmark"
+         data-action="search:loaded@document->bookmark#show notes:autobookmarked@document->bookmark#show">
 
       <!-- Mobile search (hidden on desktop) -->
       <div class="field is-hidden-desktop mb-3">
@@ -87,10 +89,7 @@
         <div data-plant-target="container"></div>
       </div>
 
-      <div data-controller="bookmark" data-action="search:loaded@document->bookmark#show notes:autobookmarked@document->bookmark#show" style="display:none;" id="bookmark-section" class="mt-4">
-        <button class="button is-outlined is-fullwidth mb-4" data-bookmark-target="button" data-action="click->bookmark#toggle" style="display:none;"></button>
-        <div class="toast" data-bookmark-target="toast"></div>
-      </div>
+      <div class="toast" data-bookmark-target="toast"></div>
 
       <nav class="section-nav" id="section-nav" style="display:none;">
         <a href="#section-seasonality">Seasonality</a>

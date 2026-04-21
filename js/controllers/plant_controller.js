@@ -53,7 +53,10 @@ export default class extends Controller {
           ${heroPhoto}
         </div>
         <div class="plant-meta">
-          <h1 class="title is-3 mb-1">${commonName}</h1>
+          <div class="is-flex is-align-items-center mb-1" style="gap:0.6rem;">
+            <h1 class="title is-3 mb-0">${commonName}</h1>
+            <button class="plant-star-btn" data-bookmark-target="star" data-action="click->bookmark#toggle">☆</button>
+          </div>
           <p class="subtitle is-5 is-italic has-text-grey mb-2">${scientificName}</p>
           ${ancestors ? `<p class="is-size-7 has-text-grey-light mb-4">${ancestors}</p>` : ""}
           <div class="is-hidden-touch">${aboutBox}</div>

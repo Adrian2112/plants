@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 import { saveBookmark, removeBookmark, isBookmarked, getAllBookmarks, getNoteCountForTaxon } from "../services/storage_service.js"
 
 export default class extends Controller {
-  static targets = ["button", "list", "toast"]
+  static targets = ["star", "list", "toast"]
   static values = { page: Boolean }
 
   connect() {
@@ -14,22 +14,13 @@ export default class extends Controller {
   async show({ detail: { taxon } }) {
     this.taxon = taxon
     this.saved = await isBookmarked(taxon.id)
-    this.element.style.display = ""
-    this.updateButton()
-    if (this.hasButtonTarget) this.buttonTarget.style.display = ""
+    this.updateStar()
   }
 
-  updateButton() {
-    if (!this.hasButtonTarget) return
-    if (this.saved) {
-      this.buttonTarget.textContent = "★ Saved"
-      this.buttonTarget.classList.add("is-success")
-      this.buttonTarget.classList.remove("is-outlined")
-    } else {
-      this.buttonTarget.textContent = "☆ Save Plant"
-      this.buttonTarget.classList.remove("is-success")
-      this.buttonTarget.classList.add("is-outlined")
-    }
+  updateStar() {
+    if (!this.hasStarTarget) return
+    this.starTarget.textContent = this.saved ? "★" : "☆"
+    this.starTarget.classList.toggle("is-saved", this.saved)
   }
 
   async toggle() {
@@ -44,14 +35,14 @@ export default class extends Controller {
       this.saved = true
       this.showToast("Plant saved for offline viewing")
     }
-    this.updateButton()
+    this.updateStar()
   }
 
   async autoBookmark(taxon) {
     if (await isBookmarked(taxon.id)) return
     await saveBookmark(taxon)
     this.saved = true
-    this.updateButton()
+    this.updateStar()
     this.showToast("Plant saved to bookmarks")
   }
 
