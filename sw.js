@@ -29,25 +29,23 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (url.origin === location.origin) {
-    event.respondWith(networkFirst(request, CACHE_NAME))
+    event.respondWith(staleWhileRevalidate(request, CACHE_NAME))
     return
   }
 
   event.respondWith(fetch(request))
 })
 
-async function networkFirst(request, cacheName) {
-  try {
-    const res = await fetch(request)
-    if (res.ok) {
-      const cache = await caches.open(cacheName)
-      cache.put(request, res.clone())
-    }
+async function staleWhileRevalidate(request, cacheName) {
+  const cache = await caches.open(cacheName)
+  const cached = await cache.match(request)
+
+  const fetchPromise = fetch(request).then(res => {
+    if (res.ok) cache.put(request, res.clone())
     return res
-  } catch {
-    const cached = await caches.match(request)
-    return cached || new Response("Offline", { status: 503 })
-  }
+  }).catch(() => null)
+
+  return cached || await fetchPromise || new Response("Offline", { status: 503 })
 }
 
 async function cacheFirst(request, cacheName, limit) {
