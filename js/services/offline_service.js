@@ -32,7 +32,6 @@ async function prefetchPhotos(taxonId) {
       const { photos } = await getObservationPhotos(taxonId, {
         termId: filter.termId,
         termValueId: filter.termValueId,
-        perPage: 16,
         page: 1,
       })
       await Promise.allSettled(
