@@ -116,7 +116,10 @@ export default class extends Controller {
           <div class="bookmark-info">
             <div class="bookmark-name">${b.common_name}</div>
             <div class="bookmark-sci">${b.scientific_name}</div>
-            <div class="bookmark-meta">${relativeTime(b.saved_at)}${b.noteCount > 0 ? ` · ${b.noteCount} note${b.noteCount > 1 ? "s" : ""}` : ""}</div>
+            <div class="bookmark-meta">
+              ${relativeTime(b.saved_at)}
+              ${b.noteCount > 0 ? `<span class="bookmark-notes-badge">📝 ${b.noteCount}</span>` : ""}
+            </div>
           </div>
         </a>
         <button class="bookmark-remove" data-action="click->bookmark#removeFromList" data-taxon-id="${b.taxon_id}" title="Remove">✕</button>

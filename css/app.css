@@ -171,6 +171,19 @@ body {
   font-size: 0.72rem;
   color: var(--text-muted);
   margin-top: 0.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.bookmark-notes-badge {
+  font-size: 0.65rem;
+  background: rgba(76, 175, 80, 0.15);
+  color: var(--primary);
+  border-radius: 4px;
+  padding: 0 0.3rem;
+  line-height: 1.5;
 }
 
 .bookmark-remove {
