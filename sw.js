@@ -36,6 +36,18 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(fetch(request))
 })
 
+async function networkFirst(request, cacheName) {
+  const cache = await caches.open(cacheName)
+  try {
+    const res = await fetch(request)
+    if (res.ok) cache.put(request, res.clone())
+    return res
+  } catch {
+    const cached = await cache.match(request)
+    return cached || new Response("Offline", { status: 503 })
+  }
+}
+
 async function staleWhileRevalidate(request, cacheName) {
   const cache = await caches.open(cacheName)
   const cached = await cache.match(request)

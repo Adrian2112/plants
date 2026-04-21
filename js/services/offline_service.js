@@ -1,4 +1,4 @@
-import { getObservationPhotos, getHistogram } from "./inat_api.js"
+import { getObservationPhotos, getHistogram, getTaxon } from "./inat_api.js"
 
 const GALLERY_FILTERS = [
   { termId: null,  termValueId: null  },
@@ -20,6 +20,7 @@ const SEASONALITY_FILTERS = [
 
 export async function prefetchForOffline(taxonId) {
   await Promise.allSettled([
+    getTaxon(taxonId).catch(() => {}),
     prefetchPhotos(taxonId),
     prefetchSeasonality(taxonId),
   ])
