@@ -14,10 +14,11 @@ export async function getTaxon(id) {
   return data.results[0]
 }
 
-export async function getHistogram(taxonId, termId, termValueId) {
+export async function getHistogram(taxonId, termId, termValueId, { lat, lng, radius } = {}) {
   let url = `${BASE}/observations/histogram?taxon_id=${taxonId}&date_field=observed&interval=month_of_year`
   if (termId) url += `&term_id=${termId}`
   if (termValueId) url += `&term_value_id=${termValueId}`
+  if (lat != null && lng != null) url += `&lat=${lat}&lng=${lng}&radius=${radius ?? 50}`
   const res = await fetch(url)
   if (!res.ok) throw new Error("Failed to load seasonality data")
   const data = await res.json()

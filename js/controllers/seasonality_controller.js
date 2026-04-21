@@ -11,23 +11,54 @@ const FILTERS = [
 ]
 
 export default class extends Controller {
-  static targets = ["chart", "filter", "empty"]
+  static targets = ["chart", "filter", "empty", "locationToggle"]
 
   connect() {
     this.element.style.display = "none"
     this.taxonId = null
+    this.coords = null
+    this.nearMe = false
   }
 
   show({ detail: { taxon } }) {
     this.taxonId = taxon.id
     this.element.style.display = ""
     this.loadData()
+    this.requestLocation()
+  }
+
+  requestLocation() {
+    if (!navigator.geolocation) return
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        this.coords = { lat: coords.latitude, lng: coords.longitude }
+        this.renderLocationToggle()
+      },
+      () => {}
+    )
+  }
+
+  renderLocationToggle() {
+    this.locationToggleTarget.innerHTML = `
+      <button class="button is-small ${this.nearMe ? "is-success" : "is-outlined"}"
+        data-action="click->seasonality#toggleLocation"
+        style="border-radius:999px;font-size:0.75rem;">
+        📍 Near me
+      </button>
+    `
+  }
+
+  toggleLocation() {
+    this.nearMe = !this.nearMe
+    this.renderLocationToggle()
+    this.loadData()
   }
 
   async loadData() {
     const filter = FILTERS[this.filterTarget.selectedIndex || 0]
+    const locationOpts = (this.nearMe && this.coords) ? this.coords : {}
     try {
-      const histogram = await getHistogram(this.taxonId, filter.termId, filter.termValueId)
+      const histogram = await getHistogram(this.taxonId, filter.termId, filter.termValueId, locationOpts)
       this.renderChart(histogram)
     } catch (e) {
       this.showEmpty("Unable to load seasonality data.")
