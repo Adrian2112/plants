@@ -19,7 +19,15 @@ export default class extends Controller {
     const L = await import("leaflet")
 
     if (!this.map) {
-      this.map = L.map(this.containerTarget, { zoomControl: true }).setView(DEFAULT_CENTER, DEFAULT_ZOOM)
+      this.map = L.map(this.containerTarget, { zoomControl: true, scrollWheelZoom: false }).setView(DEFAULT_CENTER, DEFAULT_ZOOM)
+
+      this.containerTarget.addEventListener("wheel", (e) => {
+        if (e.ctrlKey || e.metaKey) {
+          this.map.scrollWheelZoom.enable()
+        } else {
+          this.map.scrollWheelZoom.disable()
+        }
+      })
       this.containerTarget._map = this.map
 
       L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
