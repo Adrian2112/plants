@@ -87,7 +87,7 @@ export default class extends Controller {
     const currentMonth = new Date().getMonth() + 1
 
     this.chartTarget.innerHTML = Object.entries(histogram).map(([month, count]) => {
-      const likelihood = Math.round((count / max) * 100)
+      const likelihood = count > 0 ? Math.max(3, Math.round((count / max) * 100)) : 0
       const isCurrent = parseInt(month) === currentMonth
       const label = MONTHS[parseInt(month) - 1]
       return `
