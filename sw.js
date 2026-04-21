@@ -1,33 +1,9 @@
-const CACHE_NAME = "plantscope-v2"
-const STATIC_ASSETS = [
-  "/",
-  "/index.html",
-  "/bookmarks.html",
-  "/css/app.css",
-  "/js/application.js",
-  "/js/controllers/search_controller.js",
-  "/js/controllers/plant_controller.js",
-  "/js/controllers/seasonality_controller.js",
-  "/js/controllers/gallery_controller.js",
-  "/js/controllers/bookmark_controller.js",
-  "/js/controllers/notes_controller.js",
-  "/js/controllers/map_controller.js",
-  "/js/services/inat_api.js",
-  "/js/services/storage_service.js",
-  "/js/services/cache_service.js",
-  "/js/lib/url_parser.js",
-]
-
+const CACHE_NAME = "plantscope-v3"
 const API_CACHE = "plantscope-api-v1"
 const IMG_CACHE = "plantscope-img-v1"
 const IMG_CACHE_LIMIT = 200
 
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS))
-  )
-  self.skipWaiting()
-})
+self.addEventListener("install", () => self.skipWaiting())
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
