@@ -19,14 +19,22 @@ export default class extends Controller {
     return this.element.dataset.searchRequiresTaxon != null
   }
 
-  // Returns the currently visible input (navbar on desktop, main on mobile)
+  // Returns the focused input if it's one of ours, otherwise the visible one
   get activeInput() {
+    const focused = this.inputTargets.find(el => el === document.activeElement)
+    if (focused) return focused
     return this.inputTargets.find(el => el.offsetParent !== null) ?? this.inputTargets[0]
   }
 
-  // Returns the results dropdown associated with the visible input
-  get activeResults() {
+  // Returns the results dropdown paired with the given input (nearest sibling), or the visible one
+  activeResultsFor(input) {
+    const idx = this.inputTargets.indexOf(input)
+    if (idx !== -1 && this.resultsTargets[idx]) return this.resultsTargets[idx]
     return this.resultsTargets.find(el => el.offsetParent !== null) ?? this.resultsTargets[0]
+  }
+
+  get activeResults() {
+    return this.activeResultsFor(this.activeInput)
   }
 
   async checkUrlParams(addToHistory = false) {
@@ -51,17 +59,18 @@ export default class extends Controller {
     await this.resolve(parsed, addToHistory)
   }
 
-  onInput() {
+  onInput(event) {
     clearTimeout(this.debounceTimer)
-    const value = this.activeInput.value.trim()
+    const input = event.currentTarget
+    const value = input.value.trim()
     if (!value) {
       this.clearResults()
       return
     }
-    this.debounceTimer = setTimeout(() => this.handleInput(value), 300)
+    this.debounceTimer = setTimeout(() => this.handleInput(value, input), 300)
   }
 
-  async handleInput(value) {
+  async handleInput(value, input = this.activeInput) {
     const parsed = parseInput(value)
     if (!parsed) return
 
@@ -71,30 +80,31 @@ export default class extends Controller {
     }
 
     if (parsed.type === "search") {
-      await this.showAutocomplete(parsed.value)
+      await this.showAutocomplete(parsed.value, input)
     } else {
       await this.resolve(parsed)
     }
   }
 
-  async showAutocomplete(query) {
+  async showAutocomplete(query, input = this.activeInput) {
     try {
       const results = await searchTaxa(query)
-      this.renderResults(results)
+      this.renderResults(results, input)
     } catch (e) {
       this.showError("Search failed. Please try again.")
     }
   }
 
-  renderResults(results) {
+  renderResults(results, input = this.activeInput) {
+    const resultsEl = this.activeResultsFor(input)
     this.clearError()
     if (!results.length) {
-      this.activeResults.innerHTML = `<div class="dropdown-item">No plants found.</div>`
-      this.activeResults.classList.add("is-active")
+      resultsEl.innerHTML = `<div class="dropdown-item">No plants found.</div>`
+      resultsEl.classList.add("is-active")
       return
     }
 
-    this.activeResults.innerHTML = results.map(t => `
+    resultsEl.innerHTML = results.map(t => `
       <a class="dropdown-item" data-action="click->search#selectResult" data-taxon-id="${t.id}">
         <div class="is-flex is-align-items-center">
           ${t.default_photo ? `<img src="${t.default_photo.square_url}" class="mr-2" style="width:32px;height:32px;border-radius:4px;object-fit:cover;">` : ""}
@@ -105,7 +115,7 @@ export default class extends Controller {
         </div>
       </a>
     `).join("")
-    this.activeResults.classList.add("is-active")
+    resultsEl.classList.add("is-active")
   }
 
   async selectResult(event) {
