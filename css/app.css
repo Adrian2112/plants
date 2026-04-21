@@ -25,14 +25,17 @@ html, html[data-theme="dark"], html[data-theme="light"] {
   --bulma-text-strong: var(--text);
 }
 
-body {
-  padding-top: 3.25rem;
-  color: var(--text);
+html {
   scroll-behavior: smooth;
 }
 
+body {
+  padding-top: 3.25rem;
+  color: var(--text);
+}
+
 [id^="section-"] {
-  scroll-margin-top: 6rem;
+  scroll-margin-top: 7rem;
 }
 
 .section-nav {
@@ -235,6 +238,11 @@ a:not(.button):not(.navbar-item):not(.dropdown-item) {
 }
 
 /* Map / Leaflet dark theme */
+
+[data-map-target="container"] {
+  position: relative;
+  z-index: 0;
+}
 
 .leaflet-container {
   background: var(--surface-light) !important;

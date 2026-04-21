@@ -107,6 +107,12 @@ export default class extends Controller {
         }
 
         this.dispatch("loaded", { detail: { taxon } })
+        if (window.location.hash) {
+          setTimeout(() => {
+            const el = document.querySelector(window.location.hash)
+            if (el) el.scrollIntoView({ behavior: "instant", block: "start" })
+          }, 300)
+        }
       }
     } catch (e) {
       this.showError(e.message)

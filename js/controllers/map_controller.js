@@ -24,7 +24,7 @@ export default class extends Controller {
       this.map = L.map(this.containerTarget, { zoomControl: true }).setView(DEFAULT_CENTER, DEFAULT_ZOOM)
       this.containerTarget._map = this.map
 
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
         maxZoom: 16,
       }).addTo(this.map)
@@ -37,8 +37,8 @@ export default class extends Controller {
     }
 
     this.heatmapLayer = L.tileLayer(
-      `https://api.inaturalist.org/v1/colored_heatmap/{z}/{x}/{y}.png?taxon_id=${this.taxonId}`,
-      { opacity: 0.7, maxZoom: 16 }
+      `https://api.inaturalist.org/v1/heatmap/{z}/{x}/{y}.png?taxon_id=${this.taxonId}`,
+      { opacity: 0.5, maxZoom: 16 }
     ).addTo(this.map)
 
     setTimeout(() => this.map.invalidateSize(), 100)
