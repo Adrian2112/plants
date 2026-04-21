@@ -22,32 +22,42 @@
 
   <script type="module" src="./js/application.js"></script>
 </head>
-<body>
+<body data-controller="bookmark">
   <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation" style="background-color:#16213e;border-bottom:1px solid #2d3a52;">
-    <div class="navbar-brand">
-      <a class="navbar-item has-text-weight-bold" href="/" style="color:#4CAF50;">
-        <span class="icon mr-1"><span>🌿</span></span>
-        <span>PlantScope</span>
-      </a>
-      <a class="navbar-item is-hidden-desktop ml-auto" href="/bookmarks.html" style="color:#a0aec0;">
-        <span class="icon"><span>★</span></span>
-        <span>Saved</span>
-      </a>
-    </div>
-    <div class="navbar-end is-hidden-touch">
-      <a class="navbar-item" href="/bookmarks.html" style="color:#a0aec0;">
-        <span class="icon"><span>★</span></span>
-        <span>Saved</span>
-      </a>
+    <div class="container">
+      <div class="navbar-brand">
+        <a class="navbar-item has-text-weight-bold" href="/" style="color:#4CAF50;">
+          <span class="icon mr-1"><span>🌿</span></span>
+          <span>PlantScope</span>
+        </a>
+        <a class="navbar-item is-hidden-desktop ml-auto" href="/bookmarks.html" style="color:#4CAF50;">
+          <span class="icon"><span>★</span></span>
+          <span>Saved</span>
+        </a>
+      </div>
+      <div class="navbar-end is-hidden-touch">
+        <a class="navbar-item" href="/bookmarks.html" style="color:#4CAF50;">
+          <span class="icon"><span>★</span></span>
+          <span>Saved</span>
+        </a>
+      </div>
     </div>
   </nav>
 
-  <main class="section pt-6">
+  <main class="section pt-5">
     <div class="container">
-      <h1 class="title is-4">Saved Plants</h1>
-      <div data-controller="bookmark" data-bookmark-page-value="true" data-action="bookmark:connected->bookmark#renderList">
-        <div data-bookmark-target="list"></div>
+      <div class="is-flex is-justify-content-space-between is-align-items-center mb-4">
+        <h1 class="title is-4 mb-0">Saved Plants</h1>
       </div>
+      <div class="field mb-4">
+        <div class="control has-icons-left">
+          <input class="input" type="text" placeholder="Filter saved plants..."
+            data-bookmark-target="filterInput"
+            data-action="input->bookmark#onFilter">
+          <span class="icon is-left">🔍</span>
+        </div>
+      </div>
+      <div class="bookmarks-list" data-bookmark-target="list"></div>
     </div>
   </main>
 </body>

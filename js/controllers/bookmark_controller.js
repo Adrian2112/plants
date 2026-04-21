@@ -2,13 +2,14 @@ import { Controller } from "@hotwired/stimulus"
 import { saveBookmark, removeBookmark, isBookmarked, getAllBookmarks, getNoteCountForTaxon } from "../services/storage_service.js"
 
 export default class extends Controller {
-  static targets = ["star", "list", "toast", "savedCount"]
-  static values = { page: Boolean }
+  static targets = ["star", "list", "toast", "savedCount", "panel", "filterInput"]
 
   connect() {
     this.taxon = null
     this.saved = false
-    if (this.pageValue && this.hasListTarget) this.renderList()
+    this.allBookmarks = []
+    this.filterValue = ""
+    if (this.hasListTarget) this.renderList()
     this.updateCount()
   }
 
@@ -16,6 +17,7 @@ export default class extends Controller {
     this.taxon = taxon
     this.saved = await isBookmarked(taxon.id)
     this.updateStar()
+    if (this.hasPanelTarget) this.panelTarget.style.display = "none"
   }
 
   updateStar() {
@@ -65,7 +67,10 @@ export default class extends Controller {
     setTimeout(() => this.toastTarget.classList.remove("is-active"), 3000)
   }
 
-  // Bookmarks list page
+  onFilter() {
+    this.filterValue = this.filterInputTarget.value.toLowerCase().trim()
+    this.renderItems()
+  }
 
   async renderList() {
     if (!this.hasListTarget) return
@@ -74,49 +79,57 @@ export default class extends Controller {
     if (bookmarks.length === 0) {
       this.listTarget.innerHTML = `
         <p class="has-text-grey has-text-centered py-6">
-          No saved plants yet. Search for a plant and tap Save to add it here.
+          No saved plants yet. Search for a plant and tap the star to save it.
         </p>
       `
       return
     }
 
     bookmarks.sort((a, b) => new Date(b.saved_at) - new Date(a.saved_at))
+    this.allBookmarks = await Promise.all(bookmarks.map(async b => ({
+      ...b, noteCount: await getNoteCountForTaxon(b.taxon_id)
+    })))
+    this.renderItems()
+  }
 
-    const items = await Promise.all(bookmarks.map(async (b) => {
-      const noteCount = await getNoteCountForTaxon(b.taxon_id)
-      return `
-        <div class="box mb-3">
-          <article class="media">
-            <figure class="media-left">
-              <p class="image is-64x64">
-                ${b.thumbnail_url ? `<img src="${b.thumbnail_url}" style="border-radius:4px;object-fit:cover;width:64px;height:64px;">` : ""}
-              </p>
-            </figure>
-            <div class="media-content">
-              <a href="/?taxon_id=${b.taxon_id}" class="has-text-dark">
-                <strong>${b.common_name}</strong>
-                <br><small class="has-text-grey is-italic">${b.scientific_name}</small>
-              </a>
-              <br>
-              <small class="has-text-grey-light">${relativeTime(b.saved_at)}</small>
-              ${noteCount > 0 ? `<span class="tag is-small is-info is-light ml-2">${noteCount} note${noteCount > 1 ? "s" : ""}</span>` : ""}
-            </div>
-            <div class="media-right">
-              <button class="delete" data-action="click->bookmark#removeFromList" data-taxon-id="${b.taxon_id}"></button>
-            </div>
-          </article>
-        </div>
-      `
-    }))
+  renderItems() {
+    if (!this.hasListTarget) return
+    const items = this.filterValue
+      ? this.allBookmarks.filter(b =>
+          b.common_name.toLowerCase().includes(this.filterValue) ||
+          b.scientific_name.toLowerCase().includes(this.filterValue))
+      : this.allBookmarks
 
-    this.listTarget.innerHTML = items.join("")
+    if (items.length === 0) {
+      this.listTarget.innerHTML = `<p class="has-text-grey has-text-centered py-4">No matches.</p>`
+      return
+    }
+
+    this.listTarget.innerHTML = items.map(b => `
+      <div class="bookmark-item">
+        <a class="bookmark-link" href="/?taxon_id=${b.taxon_id}">
+          <div class="bookmark-thumb">
+            ${b.thumbnail_url
+              ? `<img src="${b.thumbnail_url}" alt="${b.common_name}">`
+              : `<div class="bookmark-thumb-empty"></div>`}
+          </div>
+          <div class="bookmark-info">
+            <div class="bookmark-name">${b.common_name}</div>
+            <div class="bookmark-sci">${b.scientific_name}</div>
+            <div class="bookmark-meta">${relativeTime(b.saved_at)}${b.noteCount > 0 ? ` · ${b.noteCount} note${b.noteCount > 1 ? "s" : ""}` : ""}</div>
+          </div>
+        </a>
+        <button class="bookmark-remove" data-action="click->bookmark#removeFromList" data-taxon-id="${b.taxon_id}" title="Remove">✕</button>
+      </div>
+    `).join("")
   }
 
   async removeFromList(event) {
     const taxonId = parseInt(event.currentTarget.dataset.taxonId)
     if (!confirm("Remove this plant from bookmarks?")) return
     await removeBookmark(taxonId)
-    this.renderList()
+    await this.renderList()
+    this.updateCount()
   }
 }
 
