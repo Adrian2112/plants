@@ -1,6 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
 import { saveBookmark, removeBookmark, isBookmarked, getAllBookmarks, getNoteCountForTaxon } from "../services/storage_service.js"
-import { cloneTemplate } from "../lib/templates.js"
 
 export default class extends Controller {
   static targets = ["star", "list", "toast", "savedCount", "panel", "filterInput"]
@@ -106,29 +105,26 @@ export default class extends Controller {
       return
     }
 
-    this.listTarget.innerHTML = ""
-    for (const b of items) {
-      const frag = cloneTemplate("tpl-bookmark-item")
-      frag.querySelector(".bookmark-link").href = `/?taxon_id=${b.taxon_id}`
-      if (b.thumbnail_url) {
-        const img = frag.querySelector(".bookmark-thumb-img")
-        img.src = b.thumbnail_url
-        img.alt = b.common_name
-      } else {
-        frag.querySelector(".bookmark-thumb-img").hidden = true
-        frag.querySelector(".bookmark-thumb-empty").hidden = false
-      }
-      frag.querySelector(".bookmark-name").textContent = b.common_name
-      frag.querySelector(".bookmark-sci").textContent = b.scientific_name
-      frag.querySelector(".bookmark-time").textContent = relativeTime(b.saved_at)
-      if (b.noteCount > 0) {
-        const badge = frag.querySelector(".bookmark-notes-badge")
-        badge.hidden = false
-        badge.textContent = `📝 ${b.noteCount}`
-      }
-      frag.querySelector(".bookmark-remove").dataset.taxonId = b.taxon_id
-      this.listTarget.appendChild(frag)
-    }
+    this.listTarget.innerHTML = items.map(b => `
+      <div class="bookmark-item">
+        <a class="bookmark-link" href="/?taxon_id=${b.taxon_id}">
+          <div class="bookmark-thumb">
+            ${b.thumbnail_url
+              ? `<img src="${b.thumbnail_url}" alt="${b.common_name}">`
+              : `<div class="bookmark-thumb-empty"></div>`}
+          </div>
+          <div class="bookmark-info">
+            <div class="bookmark-name">${b.common_name}</div>
+            <div class="bookmark-sci">${b.scientific_name}</div>
+            <div class="bookmark-meta">
+              ${relativeTime(b.saved_at)}
+              ${b.noteCount > 0 ? `<span class="bookmark-notes-badge">📝 ${b.noteCount}</span>` : ""}
+            </div>
+          </div>
+        </a>
+        <button class="bookmark-remove" data-action="click->bookmark#removeFromList" data-taxon-id="${b.taxon_id}" title="Remove">✕</button>
+      </div>
+    `).join("")
   }
 
   async removeFromList(event) {

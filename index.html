@@ -122,13 +122,7 @@
             <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
               <h2 class="title is-5 mb-0">Seasonality</h2>
               <div class="is-flex is-align-items-center" style="gap:0.5rem;">
-                <div data-seasonality-target="locationToggle">
-                  <button class="button is-small is-outlined" style="border-radius:999px;font-size:0.75rem;display:none;"
-                    data-seasonality-target="locationBtn"
-                    data-action="click->seasonality#toggleLocation">
-                    📍 Near me
-                  </button>
-                </div>
+                <div data-seasonality-target="locationToggle"></div>
                 <div class="select is-small">
                   <select data-seasonality-target="filter" data-action="change->seasonality#onFilterChange">
                     <option>All</option>
@@ -199,102 +193,5 @@
       </div>
     </div>
   </main>
-
-  <!-- ── Templates ─────────────────────────────────────────────── -->
-
-  <template id="tpl-bookmark-item">
-    <div class="bookmark-item">
-      <a class="bookmark-link" href="">
-        <div class="bookmark-thumb">
-          <img class="bookmark-thumb-img" alt="">
-          <div class="bookmark-thumb-empty" hidden></div>
-        </div>
-        <div class="bookmark-info">
-          <div class="bookmark-name"></div>
-          <div class="bookmark-sci"></div>
-          <div class="bookmark-meta">
-            <span class="bookmark-time"></span>
-            <span class="bookmark-notes-badge" hidden></span>
-          </div>
-        </div>
-      </a>
-      <button class="bookmark-remove" data-action="click->bookmark#removeFromList" title="Remove">✕</button>
-    </div>
-  </template>
-
-  <template id="tpl-note-item">
-    <div class="box mb-2 p-3">
-      <p class="note-text"></p>
-      <p class="note-url-row mt-1" hidden>
-        <a class="note-url is-size-7" href="" target="_blank" rel="noopener">🔗 source</a>
-      </p>
-      <div class="is-flex is-justify-content-flex-end mt-2" style="gap:0.5rem;">
-        <button class="button is-small is-text note-edit-btn" data-action="click->notes#editNote">✎</button>
-        <button class="button is-small is-text has-text-danger note-delete-btn" data-action="click->notes#confirmDelete">✕</button>
-      </div>
-    </div>
-  </template>
-
-  <template id="tpl-search-result">
-    <a class="dropdown-item" data-action="click->search#selectResult">
-      <div class="is-flex is-align-items-center">
-        <img class="search-result-img mr-2" alt="" style="width:32px;height:32px;border-radius:4px;object-fit:cover;" hidden>
-        <div>
-          <strong class="search-result-name"></strong>
-          <br><small class="has-text-grey search-result-sci"></small>
-        </div>
-      </div>
-    </a>
-  </template>
-
-  <template id="tpl-gallery-tab">
-    <li><a data-action="click->gallery#onTabClick"></a></li>
-  </template>
-
-  <template id="tpl-gallery-item">
-    <div class="gallery-item" data-action="click->gallery#openLightbox">
-      <img alt="Observation photo" loading="lazy">
-    </div>
-  </template>
-
-  <template id="tpl-seasonality-row">
-    <div class="seasonality-row">
-      <span class="seasonality-label"></span>
-      <div class="seasonality-bar-track">
-        <div class="seasonality-bar"></div>
-      </div>
-    </div>
-  </template>
-
-  <template id="tpl-plant-header">
-    <div class="plant-header">
-      <div class="plant-hero">
-        <figure class="image is-3by2 plant-hero-image" hidden>
-          <img alt="" style="object-fit:cover;border-radius:8px;">
-        </figure>
-      </div>
-      <div class="plant-meta">
-        <div class="is-flex is-align-items-center mb-1" style="gap:0.6rem;">
-          <h1 class="title is-3 mb-0 plant-common-name"></h1>
-          <button class="plant-star-btn" data-bookmark-target="star" data-action="click->bookmark#toggle">☆</button>
-        </div>
-        <p class="subtitle is-5 is-italic has-text-grey mb-2 plant-sci-name"></p>
-        <p class="is-size-7 has-text-grey-light mb-4 plant-ancestors" hidden></p>
-        <div class="is-hidden-touch plant-about-desktop"></div>
-      </div>
-    </div>
-    <div class="is-hidden-desktop plant-about-mobile"></div>
-  </template>
-
-  <template id="tpl-plant-about">
-    <div class="box mt-4">
-      <h2 class="title is-5 mb-3">About</h2>
-      <p class="plant-summary"></p>
-      <p class="mt-3 plant-wiki-row" hidden>
-        <a class="is-size-7 plant-wiki-link" href="" target="_blank" rel="noopener">📖 View on Wikipedia →</a>
-      </p>
-    </div>
-  </template>
-
 </body>
 </html>

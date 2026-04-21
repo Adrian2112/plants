@@ -1,6 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
 import { getObservationPhotos } from "../services/inat_api.js"
-import { cloneTemplate } from "../lib/templates.js"
 
 const FILTERS = [
   { label: "All", termId: null, termValueId: null },
@@ -38,16 +37,11 @@ export default class extends Controller {
   }
 
   renderTabs() {
-    this.tabsTarget.innerHTML = ""
-    FILTERS.forEach((f, i) => {
-      const frag = cloneTemplate("tpl-gallery-tab")
-      const li = frag.querySelector("li")
-      const a = frag.querySelector("a")
-      li.classList.toggle("is-active", i === 0)
-      a.textContent = f.label
-      a.dataset.index = i
-      this.tabsTarget.appendChild(frag)
-    })
+    this.tabsTarget.innerHTML = FILTERS.map((f, i) =>
+      `<li class="${i === 0 ? "is-active" : ""}">
+        <a data-action="click->gallery#onTabClick" data-index="${i}">${f.label}</a>
+      </li>`
+    ).join("")
   }
 
   onTabClick(event) {
@@ -104,13 +98,13 @@ export default class extends Controller {
     const startIndex = this.allPhotos.length
     this.allPhotos.push(...photos)
 
-    for (let i = 0; i < photos.length; i++) {
-      const frag = cloneTemplate("tpl-gallery-item")
-      const item = frag.querySelector(".gallery-item")
-      item.dataset.photoIndex = startIndex + i
-      item.querySelector("img").src = photos[i].small
-      this.gridTarget.appendChild(frag)
-    }
+    const html = photos.map((p, i) => `
+      <div class="gallery-item" data-action="click->gallery#openLightbox" data-photo-index="${startIndex + i}">
+        <img src="${p.small}" alt="Observation photo" loading="lazy">
+      </div>
+    `).join("")
+
+    this.gridTarget.insertAdjacentHTML("beforeend", html)
   }
 
   onLoadMore(event) {

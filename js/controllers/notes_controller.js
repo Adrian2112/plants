@@ -1,6 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
 import { saveNote, deleteNote, getNotesForTaxon, generateId, isBookmarked, saveBookmark } from "../services/storage_service.js"
-import { cloneTemplate } from "../lib/templates.js"
 
 export default class extends Controller {
   static targets = ["list", "form", "formText", "formUrl", "addBtn", "empty"]
@@ -29,21 +28,16 @@ export default class extends Controller {
     this.emptyTarget.style.display = "none"
     notes.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
 
-    this.listTarget.innerHTML = ""
-    for (const n of notes) {
-      const frag = cloneTemplate("tpl-note-item")
-      frag.querySelector(".note-text").textContent = n.text
-      if (n.url) {
-        frag.querySelector(".note-url-row").hidden = false
-        frag.querySelector(".note-url").href = n.url
-      }
-      const editBtn = frag.querySelector(".note-edit-btn")
-      editBtn.dataset.noteId = n.id
-      editBtn.dataset.noteText = n.text
-      editBtn.dataset.noteUrl = n.url || ""
-      frag.querySelector(".note-delete-btn").dataset.noteId = n.id
-      this.listTarget.appendChild(frag)
-    }
+    this.listTarget.innerHTML = notes.map(n => `
+      <div class="box mb-2 p-3">
+        <p>${escapeHtml(n.text)}</p>
+        ${n.url ? `<p class="mt-1"><a href="${escapeHtml(n.url)}" target="_blank" rel="noopener" class="is-size-7">🔗 source</a></p>` : ""}
+        <div class="is-flex is-justify-content-flex-end mt-2" style="gap:0.5rem;">
+          <button class="button is-small is-text" data-action="click->notes#editNote" data-note-id="${n.id}" data-note-text="${escapeAttr(n.text)}" data-note-url="${escapeAttr(n.url || "")}">✎</button>
+          <button class="button is-small is-text has-text-danger" data-action="click->notes#confirmDelete" data-note-id="${n.id}">✕</button>
+        </div>
+      </div>
+    `).join("")
   }
 
   showForm() {
@@ -107,3 +101,12 @@ export default class extends Controller {
   }
 }
 
+function escapeHtml(str) {
+  const div = document.createElement("div")
+  div.textContent = str
+  return div.innerHTML
+}
+
+function escapeAttr(str) {
+  return str.replace(/"/g, "&quot;").replace(/'/g, "&#39;")
+}

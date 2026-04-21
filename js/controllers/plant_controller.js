@@ -1,5 +1,4 @@
 import { Controller } from "@hotwired/stimulus"
-import { cloneTemplate } from "../lib/templates.js"
 
 export default class extends Controller {
   static targets = ["container"]
@@ -18,47 +17,52 @@ export default class extends Controller {
 
   render(taxon) {
     const commonName = taxon.preferred_common_name || taxon.name
+    const scientificName = taxon.name
     const photo = taxon.default_photo
     const summary = taxon.wikipedia_summary || ""
+    const wikiUrl = taxon.wikipedia_url
 
     const ancestors = (taxon.ancestors || [])
       .filter(a => a.rank_level >= 20)
       .map(a => a.name)
       .join(" › ")
 
-    const frag = cloneTemplate("tpl-plant-header")
+    const heroPhoto = photo ? `
+      <figure class="image is-3by2 plant-hero-image">
+        <img src="${photo.medium_url}" alt="${commonName}" style="object-fit:cover;border-radius:8px;">
+      </figure>
+    ` : ""
 
-    if (photo) {
-      const figure = frag.querySelector(".plant-hero-image")
-      figure.hidden = false
-      figure.querySelector("img").src = photo.medium_url
-      figure.querySelector("img").alt = commonName
-    }
+    const aboutBox = summary ? `
+      <div class="box mt-4">
+        <h2 class="title is-5 mb-3">About</h2>
+        <p>${summary}</p>
+        ${wikiUrl ? `
+          <p class="mt-3">
+            <a href="${wikiUrl}" target="_blank" rel="noopener" class="is-size-7">
+              📖 View on Wikipedia →
+            </a>
+          </p>
+        ` : ""}
+      </div>
+    ` : ""
 
-    frag.querySelector(".plant-common-name").textContent = commonName
-    frag.querySelector(".plant-sci-name").textContent = taxon.name
-
-    if (ancestors) {
-      const el = frag.querySelector(".plant-ancestors")
-      el.hidden = false
-      el.textContent = ancestors
-    }
-
-    if (summary) {
-      const makeAbout = () => {
-        const about = cloneTemplate("tpl-plant-about")
-        about.querySelector(".plant-summary").innerHTML = summary
-        if (taxon.wikipedia_url) {
-          about.querySelector(".plant-wiki-row").hidden = false
-          about.querySelector(".plant-wiki-link").href = taxon.wikipedia_url
-        }
-        return about
-      }
-      frag.querySelector(".plant-about-desktop").appendChild(makeAbout())
-      frag.querySelector(".plant-about-mobile").appendChild(makeAbout())
-    }
-
-    this.containerTarget.innerHTML = ""
-    this.containerTarget.appendChild(frag)
+    this.containerTarget.innerHTML = `
+      <div class="plant-header">
+        <div class="plant-hero">
+          ${heroPhoto}
+        </div>
+        <div class="plant-meta">
+          <div class="is-flex is-align-items-center mb-1" style="gap:0.6rem;">
+            <h1 class="title is-3 mb-0">${commonName}</h1>
+            <button class="plant-star-btn" data-bookmark-target="star" data-action="click->bookmark#toggle">☆</button>
+          </div>
+          <p class="subtitle is-5 is-italic has-text-grey mb-2">${scientificName}</p>
+          ${ancestors ? `<p class="is-size-7 has-text-grey-light mb-4">${ancestors}</p>` : ""}
+          <div class="is-hidden-touch">${aboutBox}</div>
+        </div>
+      </div>
+      <div class="is-hidden-desktop">${aboutBox}</div>
+    `
   }
 }
