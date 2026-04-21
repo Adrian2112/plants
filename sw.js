@@ -1,4 +1,4 @@
-const CACHE_NAME = "plantscope-v3"
+const CACHE_NAME = "plantscope-v4"
 const API_CACHE = "plantscope-api-v1"
 const IMG_CACHE = "plantscope-img-v1"
 const IMG_CACHE_LIMIT = 200

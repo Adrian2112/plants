@@ -17,6 +17,17 @@ export default class extends Controller {
     this.taxonId = null
     this.coords = null
     this.nearMe = false
+    this.offlineHandler = () => {
+      if (!this.nearMe) return
+      this.nearMe = false
+      this.locationToggleTarget.innerHTML = ""
+      if (this.taxonId) this.loadData()
+    }
+    window.addEventListener("offline", this.offlineHandler)
+  }
+
+  disconnect() {
+    window.removeEventListener("offline", this.offlineHandler)
   }
 
   show({ detail: { taxon } }) {
@@ -49,6 +60,7 @@ export default class extends Controller {
   }
 
   toggleLocation() {
+    if (!this.nearMe && !navigator.onLine) return
     this.nearMe = !this.nearMe
     this.renderLocationToggle()
     this.loadData()

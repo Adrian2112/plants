@@ -27,7 +27,7 @@ export async function prefetchForOffline(taxonId) {
 }
 
 async function prefetchPhotos(taxonId) {
-  for (const filter of GALLERY_FILTERS) {
+  await Promise.allSettled(GALLERY_FILTERS.map(async (filter) => {
     try {
       const { photos } = await getObservationPhotos(taxonId, {
         termId: filter.termId,
@@ -36,12 +36,12 @@ async function prefetchPhotos(taxonId) {
         page: 1,
       })
       await Promise.allSettled(
-        photos.slice(0, 16).filter(p => p.small).map(p => fetch(p.small))
+        photos.slice(0, 16).filter(p => p.small).map(p => fetch(p.small).catch(() => {}))
       )
     } catch {
       // best effort
     }
-  }
+  }))
 }
 
 async function prefetchSeasonality(taxonId) {
