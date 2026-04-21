@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 import { parseInput, getUrlParams } from "../lib/url_parser.js"
 import { searchTaxa, getTaxon, getObservation } from "../services/inat_api.js"
+import { cloneTemplate } from "../lib/templates.js"
 
 export default class extends Controller {
   static targets = ["input", "results", "error"]
@@ -74,17 +75,20 @@ export default class extends Controller {
       return
     }
 
-    this.activeResults.innerHTML = results.map(t => `
-      <a class="dropdown-item" data-action="click->search#selectResult" data-taxon-id="${t.id}">
-        <div class="is-flex is-align-items-center">
-          ${t.default_photo ? `<img src="${t.default_photo.square_url}" class="mr-2" style="width:32px;height:32px;border-radius:4px;object-fit:cover;">` : ""}
-          <div>
-            <strong>${t.preferred_common_name || t.name}</strong>
-            <br><small class="has-text-grey">${t.name}</small>
-          </div>
-        </div>
-      </a>
-    `).join("")
+    this.activeResults.innerHTML = ""
+    for (const t of results) {
+      const frag = cloneTemplate("tpl-search-result")
+      frag.querySelector(".dropdown-item").dataset.taxonId = t.id
+      if (t.default_photo) {
+        const img = frag.querySelector(".search-result-img")
+        img.src = t.default_photo.square_url
+        img.alt = t.preferred_common_name || t.name
+        img.hidden = false
+      }
+      frag.querySelector(".search-result-name").textContent = t.preferred_common_name || t.name
+      frag.querySelector(".search-result-sci").textContent = t.name
+      this.activeResults.appendChild(frag)
+    }
     this.activeResults.classList.add("is-active")
   }
 

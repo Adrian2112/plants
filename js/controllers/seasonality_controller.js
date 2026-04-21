@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import { getHistogram } from "../services/inat_api.js"
+import { cloneTemplate } from "../lib/templates.js"
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
@@ -11,7 +12,7 @@ const FILTERS = [
 ]
 
 export default class extends Controller {
-  static targets = ["chart", "filter", "empty", "locationToggle"]
+  static targets = ["chart", "filter", "empty", "locationToggle", "locationBtn"]
 
   connect() {
     this.element.style.display = "none"
@@ -41,13 +42,9 @@ export default class extends Controller {
   }
 
   renderLocationToggle() {
-    this.locationToggleTarget.innerHTML = `
-      <button class="button is-small ${this.nearMe ? "is-success" : "is-outlined"}"
-        data-action="click->seasonality#toggleLocation"
-        style="border-radius:999px;font-size:0.75rem;">
-        📍 Near me
-      </button>
-    `
+    this.locationBtnTarget.style.display = ""
+    this.locationBtnTarget.classList.toggle("is-success", this.nearMe)
+    this.locationBtnTarget.classList.toggle("is-outlined", !this.nearMe)
   }
 
   toggleLocation() {
@@ -86,19 +83,16 @@ export default class extends Controller {
 
     const currentMonth = new Date().getMonth() + 1
 
-    this.chartTarget.innerHTML = Object.entries(histogram).map(([month, count]) => {
+    this.chartTarget.innerHTML = ""
+    for (const [month, count] of Object.entries(histogram)) {
+      const frag = cloneTemplate("tpl-seasonality-row")
+      const row = frag.querySelector(".seasonality-row")
       const likelihood = count > 0 ? Math.max(1, Math.round((count / max) * 100)) : 0
-      const isCurrent = parseInt(month) === currentMonth
-      const label = MONTHS[parseInt(month) - 1]
-      return `
-        <div class="seasonality-row ${isCurrent ? "is-current" : ""}">
-          <span class="seasonality-label">${label}</span>
-          <div class="seasonality-bar-track">
-            <div class="seasonality-bar" style="width:${likelihood}%"></div>
-          </div>
-        </div>
-      `
-    }).join("")
+      row.classList.toggle("is-current", parseInt(month) === currentMonth)
+      row.querySelector(".seasonality-label").textContent = MONTHS[parseInt(month) - 1]
+      row.querySelector(".seasonality-bar").style.width = `${likelihood}%`
+      this.chartTarget.appendChild(frag)
+    }
   }
 
   showEmpty(message) {
