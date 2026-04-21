@@ -35,7 +35,7 @@ export default class extends Controller {
     if (!parsed) {
       if (this.requiresTaxon) {
         console.log("[search] no taxon in URL on taxon page → redirecting home")
-        window.location.href = "/"
+        window.location.href = "index.html"
       }
       return
     }
