@@ -1,4 +1,4 @@
-const CACHE_NAME = "plantscope-v1"
+const CACHE_NAME = "plantscope-v2"
 const STATIC_ASSETS = [
   "/",
   "/index.html",
@@ -53,7 +53,7 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (url.origin === location.origin) {
-    event.respondWith(cacheFirst(request, CACHE_NAME))
+    event.respondWith(networkFirst(request, CACHE_NAME))
     return
   }
 
