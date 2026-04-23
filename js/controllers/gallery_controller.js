@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import { getObservationPhotos } from "../services/inat_api.js"
+import { getActiveCoords, onLocationChange } from "../services/location_service.js"
 
 const FILTERS = [
   { label: "All", termId: null, termValueId: null },
@@ -22,10 +23,17 @@ export default class extends Controller {
     this.loading = false
     this.allPhotos = []
     this.lightboxIndex = 0
-
     this.handleKey = this.handleKey.bind(this)
     this.handleSwipeStart = this.handleSwipeStart.bind(this)
     this.handleSwipeEnd = this.handleSwipeEnd.bind(this)
+
+    this.cleanupLocationListener = onLocationChange(() => {
+      if (this.taxonId) this.switchFilter(this.currentFilter)
+    })
+  }
+
+  disconnect() {
+    this.cleanupLocationListener?.()
   }
 
   show({ detail: { taxon } }) {
@@ -68,10 +76,12 @@ export default class extends Controller {
 
     const filter = FILTERS[this.currentFilter]
     try {
+      const locationOpts = getActiveCoords() || {}
       const { photos, totalResults } = await getObservationPhotos(this.taxonId, {
         termId: filter.termId,
         termValueId: filter.termValueId,
         page: this.page,
+        ...locationOpts,
       })
 
       if (this.page === 1) this.gridTarget.innerHTML = ""

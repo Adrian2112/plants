@@ -1,22 +1,37 @@
 import { Controller } from "@hotwired/stimulus"
+import { onCoordsReady, setActiveLocation, isCustomLocation, isLocationEnabled, onLocationChange } from "../services/location_service.js"
 
 const DEFAULT_CENTER = [20, 0]
 const DEFAULT_ZOOM = 3
 const USER_ZOOM = 8
 
 export default class extends Controller {
-  static targets = ["container"]
+  static targets = ["container", "viewToggle"]
 
   connect() {
     this.map = null
+    this.L = null
     this.heatmapLayer = null
     this.taxonId = null
+    this.customMarker = null
+    this.cleanupLocationListener = onLocationChange(() => {
+      if (!isCustomLocation() && this.customMarker) {
+        this.customMarker.remove()
+        this.customMarker = null
+      }
+      if (this.map) this.renderViewToggle()
+    })
+  }
+
+  disconnect() {
+    this.cleanupLocationListener?.()
   }
 
   async show({ detail: { taxon } }) {
     this.taxonId = taxon.id
 
-    const L = await import("leaflet")
+    if (!this.L) this.L = await import("leaflet")
+    const L = this.L
 
     if (!this.map) {
       this.map = L.map(this.containerTarget, { zoomControl: true, scrollWheelZoom: false }).setView(DEFAULT_CENTER, DEFAULT_ZOOM)
@@ -38,6 +53,8 @@ export default class extends Controller {
       this.locateUser(L)
     }
 
+    this.renderViewToggle()
+
     if (this.heatmapLayer) {
       this.map.removeLayer(this.heatmapLayer)
     }
@@ -50,17 +67,36 @@ export default class extends Controller {
     setTimeout(() => this.map.invalidateSize(), 100)
   }
 
+  renderViewToggle() {
+    const active = isLocationEnabled() && isCustomLocation()
+    this.viewToggleTarget.innerHTML = `
+      <button class="button is-small ${active ? "is-success" : "is-outlined"}"
+        data-action="click->map#filterByMapView"
+        style="border-radius:999px;font-size:0.75rem;">
+        🗺 Filter by map view
+      </button>
+    `
+  }
+
+  filterByMapView() {
+    const center = this.map.getCenter()
+    const bounds = this.map.getBounds()
+    const radiusKm = Math.round(this.map.distance(center, bounds.getNorthEast()) / 1000)
+
+    if (this.customMarker) this.customMarker.remove()
+    this.customMarker = this.L.circleMarker([center.lat, center.lng], {
+      radius: 6, color: "#ff9800", fillColor: "#ff9800", fillOpacity: 0.9,
+    }).addTo(this.map)
+
+    setActiveLocation(center.lat, center.lng, radiusKm)
+  }
+
   locateUser(L) {
-    if (!navigator.geolocation) return
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const { latitude, longitude } = pos.coords
-        this.map.setView([latitude, longitude], USER_ZOOM)
-        L.circleMarker([latitude, longitude], {
-          radius: 6, color: "#4CAF50", fillColor: "#4CAF50", fillOpacity: 0.8,
-        }).addTo(this.map)
-      },
-      () => {}
-    )
+    onCoordsReady(({ lat, lng }) => {
+      this.map.setView([lat, lng], USER_ZOOM)
+      L.circleMarker([lat, lng], {
+        radius: 6, color: "#4CAF50", fillColor: "#4CAF50", fillOpacity: 0.8,
+      }).addTo(this.map)
+    })
   }
 }

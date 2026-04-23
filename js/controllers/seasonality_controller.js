@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import { getHistogram } from "../services/inat_api.js"
+import { getActiveCoords, onLocationChange } from "../services/location_service.js"
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
@@ -11,67 +12,27 @@ const FILTERS = [
 ]
 
 export default class extends Controller {
-  static targets = ["chart", "filter", "empty", "locationToggle"]
+  static targets = ["chart", "filter", "empty"]
 
   connect() {
     this.taxonId = null
-    this.coords = null
-    this.nearMe = false
-    this.offlineHandler = () => {
-      if (!this.nearMe) return
-      this.nearMe = false
-      this.locationToggleTarget.innerHTML = ""
+    this.cleanupLocationListener = onLocationChange(() => {
       if (this.taxonId) this.loadData()
-    }
-    window.addEventListener("offline", this.offlineHandler)
+    })
   }
 
   disconnect() {
-    window.removeEventListener("offline", this.offlineHandler)
+    this.cleanupLocationListener?.()
   }
 
   show({ detail: { taxon } }) {
     this.taxonId = taxon.id
     this.loadData()
-    this.requestLocation()
-  }
-
-  requestLocation() {
-    if (!navigator.geolocation || !navigator.onLine) return
-    navigator.geolocation.getCurrentPosition(
-      ({ coords }) => {
-        this.coords = {
-          lat: Math.round(coords.latitude * 100) / 100,
-          lng: Math.round(coords.longitude * 100) / 100,
-        }
-        this.nearMe = true
-        this.renderLocationToggle()
-        this.loadData()
-      },
-      () => {}
-    )
-  }
-
-  renderLocationToggle() {
-    this.locationToggleTarget.innerHTML = `
-      <button class="button is-small ${this.nearMe ? "is-success" : "is-outlined"}"
-        data-action="click->seasonality#toggleLocation"
-        style="border-radius:999px;font-size:0.75rem;">
-        📍 Near me
-      </button>
-    `
-  }
-
-  toggleLocation() {
-    if (!this.nearMe && !navigator.onLine) return
-    this.nearMe = !this.nearMe
-    this.renderLocationToggle()
-    this.loadData()
   }
 
   async loadData() {
     const filter = FILTERS[this.filterTarget.selectedIndex || 0]
-    const locationOpts = (this.nearMe && this.coords) ? this.coords : {}
+    const locationOpts = getActiveCoords() || {}
     try {
       const histogram = await getHistogram(this.taxonId, filter.termId, filter.termValueId, locationOpts)
       this.renderChart(histogram)

@@ -27,14 +27,15 @@
   <script type="module" src="./js/application.js"></script>
 </head>
 <body data-controller="search bookmark" data-search-requires-taxon="true">
-  <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation" style="background-color:#16213e;border-bottom:1px solid #2d3a52;">
+  <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation" style="background-color:#16213e;border-bottom:1px solid #2d3a52;" data-controller="location">
     <div class="container">
       <div class="navbar-brand">
         <a class="navbar-item has-text-weight-bold" href="index.html" style="color:#4CAF50;">
           <span class="icon mr-1"><span>🌿</span></span>
           <span>PlantScope</span>
         </a>
-        <a class="navbar-item is-hidden-desktop ml-auto" href="index.html" style="color:#a0aec0;">
+        <div class="navbar-item is-hidden-desktop" data-location-target="toggle"></div>
+        <a class="navbar-item is-hidden-desktop" href="index.html" style="color:#a0aec0;">
           <span class="icon"><span>☆</span></span>
           <span>Saved</span>
         </a>
@@ -55,6 +56,7 @@
           </div>
         </div>
         <div class="navbar-end">
+          <div class="navbar-item is-hidden-touch" data-location-target="toggle"></div>
           <a class="navbar-item" href="index.html" style="color:#a0aec0;">
             <span class="icon"><span>☆</span></span>
             <span>Saved</span>
@@ -113,8 +115,7 @@
             <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
               <h2 class="title is-5 mb-0">Seasonality</h2>
               <div class="is-flex is-align-items-center" style="gap:0.5rem;">
-                <div data-seasonality-target="locationToggle"></div>
-                <div class="select is-small">
+<div class="select is-small">
                   <select data-seasonality-target="filter" data-action="change->seasonality#onFilterChange">
                     <option>All</option>
                     <option>Flowering</option>
@@ -135,6 +136,7 @@
           <div class="box">
             <h2 class="title is-5 mb-3">Distribution</h2>
             <div data-map-target="container" style="height:300px;border-radius:4px;"></div>
+            <div data-map-target="viewToggle" class="mt-2"></div>
           </div>
         </div>
       </div>

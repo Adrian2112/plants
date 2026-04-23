@@ -39,10 +39,11 @@ export async function getHistogram(taxonId, termId, termValueId, { lat, lng, rad
   return data.results.month_of_year
 }
 
-export async function getObservationPhotos(taxonId, { termId, termValueId, page = 1, perPage = 30 } = {}) {
+export async function getObservationPhotos(taxonId, { termId, termValueId, page = 1, perPage = 30, lat, lng, radius } = {}) {
   let url = `${BASE}/observations?taxon_id=${taxonId}&photos=true&per_page=${perPage}&page=${page}&quality_grade=research&order_by=votes`
   if (termId) url += `&term_id=${termId}`
   if (termValueId) url += `&term_value_id=${termValueId}`
+  if (lat != null && lng != null) url += `&lat=${lat}&lng=${lng}&radius=${radius ?? 200}`
   const data = await apiFetch(url)
   const photos = []
   for (const obs of data.results) {
