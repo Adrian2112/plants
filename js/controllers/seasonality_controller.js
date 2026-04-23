@@ -1,21 +1,16 @@
 import { Controller } from "@hotwired/stimulus"
 import { getHistogram } from "../services/inat_api.js"
 import { getActiveCoords, onLocationChange } from "../services/location_service.js"
+import { getFiltersForTaxon } from "../services/taxon_filters.js"
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-
-const FILTERS = [
-  { label: "All", termId: null, termValueId: null },
-  { label: "Flowering", termId: 12, termValueId: 13 },
-  { label: "Fruiting", termId: 12, termValueId: 14 },
-  { label: "Budding", termId: 12, termValueId: 15 },
-]
 
 export default class extends Controller {
   static targets = ["chart", "filter", "empty"]
 
   connect() {
     this.taxonId = null
+    this.filters = []
     this.cleanupLocationListener = onLocationChange(() => {
       if (this.taxonId) this.loadData()
     })
@@ -27,11 +22,19 @@ export default class extends Controller {
 
   show({ detail: { taxon } }) {
     this.taxonId = taxon.id
+    this.filters = getFiltersForTaxon(taxon.iconic_taxon_name)
+    this.renderFilterOptions()
     this.loadData()
   }
 
+  renderFilterOptions() {
+    this.filterTarget.innerHTML = this.filters
+      .map(f => `<option>${f.label}</option>`)
+      .join("")
+  }
+
   async loadData() {
-    const filter = FILTERS[this.filterTarget.selectedIndex || 0]
+    const filter = this.filters[this.filterTarget.selectedIndex] || this.filters[0]
     const locationOpts = getActiveCoords() || {}
     try {
       const histogram = await getHistogram(this.taxonId, filter.termId, filter.termValueId, locationOpts)

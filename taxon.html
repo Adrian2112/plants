@@ -34,7 +34,7 @@
           <span class="icon mr-1"><span>🌿</span></span>
           <span>PlantScope</span>
         </a>
-        <div class="navbar-item is-hidden-desktop" data-location-target="toggle"></div>
+        <div class="navbar-item is-hidden-desktop ml-auto" data-location-target="toggle"></div>
         <button class="navbar-item is-hidden-desktop button is-ghost" data-action="click->settings#open" style="color:#a0aec0;background:none;border:none;cursor:pointer;">
           ⚙️
         </button>
@@ -115,12 +115,7 @@
               <h2 class="title is-5 mb-0">Seasonality</h2>
               <div class="is-flex is-align-items-center" style="gap:0.5rem;">
 <div class="select is-small">
-                  <select data-seasonality-target="filter" data-action="change->seasonality#onFilterChange">
-                    <option>All</option>
-                    <option>Flowering</option>
-                    <option>Fruiting</option>
-                    <option>Budding</option>
-                  </select>
+                  <select data-seasonality-target="filter" data-action="change->seasonality#onFilterChange"></select>
                 </div>
               </div>
             </div>
@@ -164,6 +159,10 @@
       <div id="section-photos" data-controller="gallery" data-action="search:loaded@document->gallery#show">
         <div class="box mt-4">
           <h2 class="title is-5 mb-3">Photos</h2>
+          <div data-gallery-target="mineSection" style="display:none;">
+            <p class="is-size-7 has-text-grey mb-2" style="text-transform:uppercase;letter-spacing:0.05em;">My observations</p>
+            <div class="gallery-grid mb-4" data-gallery-target="mineGrid"></div>
+          </div>
           <div class="tabs is-small is-toggle gallery-tabs">
             <ul data-gallery-target="tabs"></ul>
           </div>
@@ -210,6 +209,24 @@
             <input class="input" type="text" placeholder="your_username" data-settings-target="usernameInput">
           </div>
           <p class="help">Used to show species you've personally observed.</p>
+        </div>
+        <div class="field">
+          <label class="label">Primary Language</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select data-settings-target="primaryLanguageSelect"></select>
+            </div>
+          </div>
+          <p class="help">Language for common names.</p>
+        </div>
+        <div class="field">
+          <label class="label">Secondary Language</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select data-settings-target="secondaryLanguageSelect"></select>
+            </div>
+          </div>
+          <p class="help">Shows an additional name below the primary name.</p>
         </div>
       </section>
       <footer class="modal-card-foot" style="gap:0.5rem;">

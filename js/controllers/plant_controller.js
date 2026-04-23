@@ -1,13 +1,27 @@
 import { Controller } from "@hotwired/stimulus"
+import { getLocalizedName } from "../services/inat_api.js"
+import { getSecondaryLanguage, LANGUAGES } from "../services/settings_service.js"
 
 export default class extends Controller {
   static targets = ["container"]
 
-  show({ detail: { taxon } }) {
+  async show({ detail: { taxon } }) {
     this.render(taxon)
     document.title = `${taxon.preferred_common_name || taxon.name} — PlantScope`
     const nav = document.getElementById("section-nav")
     if (nav) nav.style.display = ""
+
+    const secondaryLocale = getSecondaryLanguage()
+    if (secondaryLocale) {
+      const secondaryName = await getLocalizedName(taxon.id, secondaryLocale)
+      if (secondaryName) {
+        const subtitle = this.containerTarget.querySelector(".plant-secondary-name")
+        if (subtitle) {
+          subtitle.textContent = `${secondaryName}`
+          subtitle.style.display = ""
+        }
+      }
+    }
   }
 
   render(taxon) {
@@ -52,7 +66,8 @@ export default class extends Controller {
             <h1 class="title is-3 mb-0">${commonName}</h1>
             <button class="plant-star-btn" data-bookmark-target="star" data-action="click->bookmark#toggle">☆</button>
           </div>
-          <p class="subtitle is-5 is-italic has-text-grey mb-2">${scientificName}</p>
+          <p class="subtitle is-5 is-italic has-text-grey mb-1">${scientificName}</p>
+          <p class="plant-secondary-name is-size-6 has-text-grey-light mb-2" style="${getSecondaryLanguage() ? "" : "display:none;"}"></p>
           ${ancestors ? `<p class="is-size-7 has-text-grey-light mb-4">${ancestors}</p>` : ""}
           <div class="is-hidden-touch">${aboutBox}</div>
         </div>

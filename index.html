@@ -38,7 +38,7 @@
           <span class="icon mr-1"><span>🌿</span></span>
           <span>PlantScope</span>
         </a>
-        <div class="navbar-item is-hidden-desktop" data-location-target="toggle"></div>
+        <div class="navbar-item is-hidden-desktop ml-auto" data-location-target="toggle"></div>
         <button class="navbar-item is-hidden-desktop button is-ghost" data-action="click->settings#open" style="color:#a0aec0;background:none;border:none;cursor:pointer;">
           ⚙️
         </button>
@@ -134,6 +134,24 @@
             <input class="input" type="text" placeholder="your_username" data-settings-target="usernameInput">
           </div>
           <p class="help">Used to show species you've personally observed.</p>
+        </div>
+        <div class="field">
+          <label class="label">Primary Language</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select data-settings-target="primaryLanguageSelect"></select>
+            </div>
+          </div>
+          <p class="help">Language for common names.</p>
+        </div>
+        <div class="field">
+          <label class="label">Secondary Language</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select data-settings-target="secondaryLanguageSelect"></select>
+            </div>
+          </div>
+          <p class="help">Shows an additional name below the primary name.</p>
         </div>
       </section>
       <footer class="modal-card-foot" style="gap:0.5rem;">

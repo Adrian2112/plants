@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 import { parseInput, getUrlParams } from "../lib/url_parser.js"
 import { searchTaxa, getTaxon, getObservation } from "../services/inat_api.js"
+import { getPrimaryLanguage } from "../services/settings_service.js"
 
 export default class extends Controller {
   static targets = ["input", "results", "error"]
@@ -88,7 +89,7 @@ export default class extends Controller {
 
   async showAutocomplete(query, input = this.activeInput) {
     try {
-      const results = await searchTaxa(query)
+      const results = await searchTaxa(query, getPrimaryLanguage())
       this.renderResults(results, input)
     } catch (e) {
       this.showError("Search failed. Please try again.")
@@ -138,7 +139,7 @@ export default class extends Controller {
     try {
       let taxon
       if (parsed.type === "taxon_id") {
-        taxon = await getTaxon(parsed.value)
+        taxon = await getTaxon(parsed.value, getPrimaryLanguage())
       } else if (parsed.type === "observation_id") {
         taxon = await getObservation(parsed.value)
       }

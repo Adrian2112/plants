@@ -20,14 +20,19 @@ async function apiFetch(url) {
   return data
 }
 
-export async function searchTaxa(query) {
-  const data = await apiFetch(`${BASE}/taxa/autocomplete?q=${encodeURIComponent(query)}&per_page=8&taxon_id=47126`)
+export async function searchTaxa(query, locale = "en") {
+  const data = await apiFetch(`${BASE}/taxa/autocomplete?q=${encodeURIComponent(query)}&per_page=8&taxon_id=47126&locale=${locale}`)
   return data.results
 }
 
-export async function getTaxon(id) {
-  const data = await apiFetch(`${BASE}/taxa/${id}`)
+export async function getTaxon(id, locale = "en") {
+  const data = await apiFetch(`${BASE}/taxa/${id}?locale=${locale}`)
   return data.results[0]
+}
+
+export async function getLocalizedName(taxonId, locale) {
+  const taxon = await getTaxon(taxonId, locale)
+  return taxon?.preferred_common_name || null
 }
 
 export async function getHistogram(taxonId, termId, termValueId, { lat, lng, radius } = {}) {
@@ -39,11 +44,12 @@ export async function getHistogram(taxonId, termId, termValueId, { lat, lng, rad
   return data.results.month_of_year
 }
 
-export async function getObservationPhotos(taxonId, { termId, termValueId, page = 1, perPage = 30, lat, lng, radius } = {}) {
+export async function getObservationPhotos(taxonId, { termId, termValueId, page = 1, perPage = 30, lat, lng, radius, userLogin } = {}) {
   let url = `${BASE}/observations?taxon_id=${taxonId}&photos=true&per_page=${perPage}&page=${page}&quality_grade=research&order_by=votes`
   if (termId) url += `&term_id=${termId}`
   if (termValueId) url += `&term_value_id=${termValueId}`
   if (lat != null && lng != null) url += `&lat=${lat}&lng=${lng}&radius=${radius ?? 200}`
+  if (userLogin) url += `&user_login=${encodeURIComponent(userLogin)}`
   const data = await apiFetch(url)
   const photos = []
   for (const obs of data.results) {
@@ -62,8 +68,8 @@ export async function getObservationPhotos(taxonId, { termId, termValueId, page 
   return { photos, totalResults: data.total_results, page }
 }
 
-export async function getUserSpecies(username, { lat, lng, radius } = {}) {
-  let url = `${BASE}/observations/species_counts?user_login=${encodeURIComponent(username)}&per_page=500`
+export async function getUserSpecies(username, { lat, lng, radius, locale = "en" } = {}) {
+  let url = `${BASE}/observations/species_counts?user_login=${encodeURIComponent(username)}&per_page=500&locale=${locale}`
   if (lat != null && lng != null) url += `&lat=${lat}&lng=${lng}&radius=${radius ?? 200}`
   const data = await apiFetch(url)
   return data.results.sort((a, b) => {

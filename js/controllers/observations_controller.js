@@ -1,7 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 import { getUserSpecies } from "../services/inat_api.js"
-import { getUsername } from "../services/settings_service.js"
+import { getUsername, getPrimaryLanguage, getSecondaryLanguage, LANGUAGES } from "../services/settings_service.js"
 import { getActiveCoords, onLocationChange } from "../services/location_service.js"
+import { getDisplayName } from "../services/taxon_filters.js"
 
 export default class extends Controller {
   static targets = ["section", "list"]
@@ -9,6 +10,7 @@ export default class extends Controller {
   connect() {
     this.allSpecies = []
     this.filterValue = ""
+    this.secondaryNames = {}
     this.cleanupLocationListener = onLocationChange(() => this.load())
     this.load()
   }
@@ -37,7 +39,17 @@ export default class extends Controller {
     this.listTarget.innerHTML = `<p class="has-text-grey">Loading…</p>`
 
     try {
-      this.allSpecies = await getUserSpecies(username, getActiveCoords() || {})
+      const coords = getActiveCoords() || {}
+      this.allSpecies = await getUserSpecies(username, { ...coords, locale: getPrimaryLanguage() })
+
+      const secondaryLocale = getSecondaryLanguage()
+      if (secondaryLocale) {
+        const secondary = await getUserSpecies(username, { ...coords, locale: secondaryLocale })
+        this.secondaryNames = Object.fromEntries(secondary.map(({ taxon }) => [taxon.id, taxon.preferred_common_name || ""]))
+      } else {
+        this.secondaryNames = {}
+      }
+
       this.renderItems()
     } catch {
       this.listTarget.innerHTML = `<p class="has-text-grey">Unable to load observations.</p>`
@@ -45,6 +57,9 @@ export default class extends Controller {
   }
 
   renderItems() {
+    const secondaryLocale = getSecondaryLanguage()
+    const secondaryLangLabel = secondaryLocale ? (LANGUAGES.find(l => l.code === secondaryLocale)?.label || secondaryLocale) : null
+
     const items = this.filterValue
       ? this.allSpecies.filter(({ taxon }) =>
           (taxon.preferred_common_name || "").toLowerCase().includes(this.filterValue) ||
@@ -58,12 +73,13 @@ export default class extends Controller {
 
     const groups = {}
     for (const entry of items) {
-      const group = entry.taxon.iconic_taxon_name || "Other"
+      const group = getDisplayName(entry.taxon.iconic_taxon_name)
       if (!groups[group]) groups[group] = []
       groups[group].push(entry)
     }
 
     this.listTarget.innerHTML = Object.keys(groups).sort().map(group => `
+
       <details class="mt-3" ${this.filterValue ? "open" : ""}>
         <summary class="has-text-grey is-size-7 mb-2" style="cursor:pointer;text-transform:uppercase;letter-spacing:0.05em;display:flex;align-items:center;gap:0.4rem;">
           <span>${group}</span>
@@ -80,6 +96,7 @@ export default class extends Controller {
                 </div>
                 <div class="bookmark-info">
                   <div class="bookmark-name">${taxon.preferred_common_name || taxon.name}</div>
+                  ${secondaryLocale && this.secondaryNames[taxon.id] ? `<div class="bookmark-secondary">${this.secondaryNames[taxon.id]}</div>` : ""}
                   <div class="bookmark-sci">${taxon.name}</div>
                   <div class="bookmark-meta">${count} observation${count !== 1 ? "s" : ""}</div>
                 </div>
@@ -90,4 +107,5 @@ export default class extends Controller {
       </details>
     `).join("")
   }
+
 }

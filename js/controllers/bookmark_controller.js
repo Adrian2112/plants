@@ -1,6 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 import { saveBookmark, removeBookmark, isBookmarked, getAllBookmarks, getNoteCountForTaxon } from "../services/storage_service.js"
 import { prefetchForOffline } from "../services/offline_service.js"
+import { getLocalizedName } from "../services/inat_api.js"
+import { getSecondaryLanguage, LANGUAGES } from "../services/settings_service.js"
 
 export default class extends Controller {
   static targets = ["star", "list", "toast", "savedCount", "panel", "filterInput"]
@@ -10,6 +12,7 @@ export default class extends Controller {
     this.saved = false
     this.allBookmarks = []
     this.filterValue = ""
+    this.secondaryNames = {}
     if (this.hasListTarget) this.renderList()
     this.updateCount()
   }
@@ -92,6 +95,7 @@ export default class extends Controller {
       ...b, noteCount: await getNoteCountForTaxon(b.taxon_id)
     })))
     this.renderItems()
+    this.fetchSecondaryNames()
   }
 
   renderItems() {
@@ -107,26 +111,48 @@ export default class extends Controller {
       return
     }
 
-    this.listTarget.innerHTML = items.map(b => `
-      <div class="bookmark-item">
-        <a class="bookmark-link" href="taxon.html?taxon_id=${b.taxon_id}">
-          <div class="bookmark-thumb">
-            ${b.thumbnail_url
-              ? `<img src="${b.thumbnail_url}" alt="${b.common_name}">`
-              : `<div class="bookmark-thumb-empty"></div>`}
-          </div>
-          <div class="bookmark-info">
-            <div class="bookmark-name">${b.common_name}</div>
-            <div class="bookmark-sci">${b.scientific_name}</div>
-            <div class="bookmark-meta">
-              ${relativeTime(b.saved_at)}
-              ${b.noteCount > 0 ? `<span class="bookmark-notes-badge">📝 ${b.noteCount}</span>` : ""}
+    const secondaryLocale = getSecondaryLanguage()
+    const secondaryLangLabel = secondaryLocale ? (LANGUAGES.find(l => l.code === secondaryLocale)?.label || secondaryLocale) : null
+
+    this.listTarget.innerHTML = items.map(b => {
+      const secondaryName = this.secondaryNames[b.taxon_id]
+      const secondaryEl = secondaryLocale
+        ? `<div class="bookmark-secondary" data-secondary-id="${b.taxon_id}">${secondaryName ? `${secondaryName} (${secondaryLangLabel})` : ""}</div>`
+        : ""
+      return `
+        <div class="bookmark-item">
+          <a class="bookmark-link" href="taxon.html?taxon_id=${b.taxon_id}">
+            <div class="bookmark-thumb">
+              ${b.thumbnail_url
+                ? `<img src="${b.thumbnail_url}" alt="${b.common_name}">`
+                : `<div class="bookmark-thumb-empty"></div>`}
             </div>
-          </div>
-        </a>
-        <button class="bookmark-remove" data-action="click->bookmark#removeFromList" data-taxon-id="${b.taxon_id}" title="Remove">✕</button>
-      </div>
-    `).join("")
+            <div class="bookmark-info">
+              <div class="bookmark-name">${b.common_name}</div>
+              ${secondaryEl}
+              <div class="bookmark-sci">${b.scientific_name}</div>
+              <div class="bookmark-meta">
+                ${relativeTime(b.saved_at)}
+                ${b.noteCount > 0 ? `<span class="bookmark-notes-badge">📝 ${b.noteCount}</span>` : ""}
+              </div>
+            </div>
+          </a>
+          <button class="bookmark-remove" data-action="click->bookmark#removeFromList" data-taxon-id="${b.taxon_id}" title="Remove">✕</button>
+        </div>
+      `
+    }).join("")
+  }
+
+  async fetchSecondaryNames() {
+    const locale = getSecondaryLanguage()
+    if (!locale) return
+    await Promise.all(this.allBookmarks.map(async b => {
+      if (this.secondaryNames[b.taxon_id] !== undefined) return
+      const name = await getLocalizedName(b.taxon_id, locale).catch(() => null)
+      this.secondaryNames[b.taxon_id] = name || ""
+      const el = this.listTarget.querySelector(`[data-secondary-id="${b.taxon_id}"]`)
+      if (el && name) el.textContent = name
+    }))
   }
 
   async removeFromList(event) {

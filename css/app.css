@@ -177,6 +177,14 @@ details[open] summary::before {
   text-overflow: ellipsis;
 }
 
+.bookmark-secondary {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .bookmark-meta {
   font-size: 0.72rem;
   color: var(--text-muted);
