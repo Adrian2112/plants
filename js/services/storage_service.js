@@ -9,8 +9,8 @@ function openDB() {
       if (!db.objectStoreNames.contains("bookmarks")) {
         db.createObjectStore("bookmarks", { keyPath: "taxon_id" })
       }
-      if (!db.objectStoreNames.contains("ethnobotany_notes")) {
-        const store = db.createObjectStore("ethnobotany_notes", { keyPath: "id" })
+      if (!db.objectStoreNames.contains("notes")) {
+        const store = db.createObjectStore("notes", { keyPath: "id" })
         store.createIndex("taxon_id", "taxon_id", { unique: false })
       }
     }
@@ -105,7 +105,7 @@ function updateBookmarkIndex() {
   })
 }
 
-// Ethnobotany Notes
+// Notes
 
 export function generateId() {
   return crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2)
@@ -114,8 +114,8 @@ export function generateId() {
 export async function saveNote(note) {
   const db = await openDB()
   return new Promise((resolve, reject) => {
-    const t = db.transaction("ethnobotany_notes", "readwrite")
-    t.objectStore("ethnobotany_notes").put(note)
+    const t = db.transaction("notes", "readwrite")
+    t.objectStore("notes").put(note)
     t.oncomplete = () => resolve()
     t.onerror = () => reject(t.error)
   })
@@ -124,8 +124,8 @@ export async function saveNote(note) {
 export async function deleteNote(id) {
   const db = await openDB()
   return new Promise((resolve, reject) => {
-    const t = db.transaction("ethnobotany_notes", "readwrite")
-    t.objectStore("ethnobotany_notes").delete(id)
+    const t = db.transaction("notes", "readwrite")
+    t.objectStore("notes").delete(id)
     t.oncomplete = () => resolve()
     t.onerror = () => reject(t.error)
   })
@@ -134,8 +134,8 @@ export async function deleteNote(id) {
 export async function getNotesForTaxon(taxonId) {
   const db = await openDB()
   return new Promise((resolve, reject) => {
-    const t = db.transaction("ethnobotany_notes", "readonly")
-    const index = t.objectStore("ethnobotany_notes").index("taxon_id")
+    const t = db.transaction("notes", "readonly")
+    const index = t.objectStore("notes").index("taxon_id")
     const req = index.getAll(taxonId)
     req.onsuccess = () => resolve(req.result)
     req.onerror = () => reject(req.error)

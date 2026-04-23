@@ -104,7 +104,7 @@
       <nav class="section-nav" id="section-nav" style="display:none;">
         <a href="#section-seasonality">Seasonality</a>
         <a href="#section-map">Distribution</a>
-        <a href="#section-ethnobotany">Ethnobotany</a>
+        <a href="#section-notes">Notes</a>
         <a href="#section-photos">Photos</a>
       </nav>
 
@@ -135,9 +135,9 @@
         </div>
       </div>
 
-      <div id="section-ethnobotany" data-controller="notes" data-action="search:loaded@document->notes#show">
+      <div id="section-notes" data-controller="notes" data-action="search:loaded@document->notes#show">
         <div class="box mt-4">
-          <h2 class="title is-5 mb-3">Ethnobotany</h2>
+          <h2 class="title is-5 mb-3">Notes</h2>
           <div data-notes-target="list"></div>
           <p class="has-text-grey is-size-7" data-notes-target="empty">No ethnobotanical notes yet. Add one below.</p>
           <button class="button is-small is-outlined mt-2" data-notes-target="addBtn" data-action="click->notes#showForm">+ Add note</button>
