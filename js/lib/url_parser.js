@@ -17,6 +17,9 @@ export function parseInput(input) {
     return { type: "error", message: "Couldn't parse that iNaturalist URL. Try a taxon or observation link." }
   }
 
+  const merlinMatch = trimmed.match(/merlinbirds\.org\/species\/([^?#/]+)/)
+  if (merlinMatch) return { type: "merlin_species", value: merlinMatch[1] }
+
   return { type: "search", value: trimmed }
 }
 
@@ -25,7 +28,7 @@ export function getUrlParams() {
   const url = params.get("url")
   const taxonId = params.get("taxon_id")
 
-  if (url) return parseInput(url)
   if (taxonId) return { type: "taxon_id", value: taxonId }
+  if (url) return parseInput(url)
   return null
 }

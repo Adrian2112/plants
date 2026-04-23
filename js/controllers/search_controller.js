@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 import { parseInput, getUrlParams } from "../lib/url_parser.js"
 import { searchTaxa, getTaxon, getObservation } from "../services/inat_api.js"
+import { getEbirdSciName } from "../services/ebird_api.js"
 import { getPrimaryLanguage } from "../services/settings_service.js"
 
 export default class extends Controller {
@@ -53,11 +54,23 @@ export default class extends Controller {
       return
     }
     if (this.navigateTo) {
-      console.log("[search] navigating to", `${this.navigateTo}${window.location.search}`)
-      window.location.href = `${this.navigateTo}${window.location.search}`
+      try {
+        const taxonId = await this.toTaxonId(parsed)
+        const originalUrl = new URLSearchParams(window.location.search).get("url")
+        const dest = new URL(this.navigateTo, window.location)
+        dest.searchParams.set("taxon_id", taxonId)
+        if (originalUrl) dest.searchParams.set("url", originalUrl)
+        window.location.href = dest.toString()
+      } catch (e) {
+        this.showError(e.message)
+      }
       return
     }
-    await this.resolve(parsed, addToHistory)
+    if (parsed.type === "merlin_species") {
+      await this.resolveMerlin(parsed.value)
+    } else {
+      await this.resolve(parsed, addToHistory)
+    }
   }
 
   onInput(event) {
@@ -82,8 +95,38 @@ export default class extends Controller {
 
     if (parsed.type === "search") {
       await this.showAutocomplete(parsed.value, input)
+    } else if (parsed.type === "merlin_species") {
+      await this.resolveMerlin(parsed.value)
     } else {
       await this.resolve(parsed)
+    }
+  }
+
+  async toTaxonId(parsed) {
+    if (parsed.type === "taxon_id") return parsed.value
+    if (parsed.type === "observation_id") {
+      const taxon = await getObservation(parsed.value)
+      return taxon.id
+    }
+    if (parsed.type === "merlin_species") {
+      const sciName = await getEbirdSciName(parsed.value)
+      const results = await searchTaxa(sciName, getPrimaryLanguage(), null)
+      if (!results.length) throw new Error(`No iNaturalist taxon found for "${sciName}".`)
+      return results[0].id
+    }
+    throw new Error("Unrecognised input.")
+  }
+
+  async resolveMerlin(speciesCode) {
+    this.clearError()
+    this.dispatch("loading")
+    try {
+      const sciName = await getEbirdSciName(speciesCode)
+      const results = await searchTaxa(sciName, getPrimaryLanguage(), null)
+      if (!results.length) throw new Error(`No iNaturalist taxon found for "${sciName}".`)
+      await this.resolve({ type: "taxon_id", value: results[0].id }, true)
+    } catch (e) {
+      this.showError(e.message)
     }
   }
 

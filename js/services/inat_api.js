@@ -21,7 +21,8 @@ async function apiFetch(url) {
 }
 
 export async function searchTaxa(query, locale = "en") {
-  const data = await apiFetch(`${BASE}/taxa/autocomplete?q=${encodeURIComponent(query)}&per_page=8&taxon_id=47126&locale=${locale}`)
+  let url = `${BASE}/taxa/autocomplete?q=${encodeURIComponent(query)}&per_page=8&locale=${locale}`
+  const data = await apiFetch(url)
   return data.results
 }
 
