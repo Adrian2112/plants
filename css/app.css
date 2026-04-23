@@ -388,9 +388,11 @@ html[data-theme="dark"] .navbar {
   color: var(--primary) !important;
 }
 
-.button.is-outlined:hover {
-  background-color: var(--primary) !important;
-  color: white !important;
+@media (hover: hover) {
+  .button.is-outlined:hover {
+    background-color: var(--primary) !important;
+    color: white !important;
+  }
 }
 
 .button.is-success {
