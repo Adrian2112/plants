@@ -15,16 +15,17 @@ async function apiFetch(url) {
   return data
 }
 
-export async function getBirdSounds(sciName, page = 1) {
+const QUALITY_RANK = { A: 0, B: 1, C: 2, D: 3, E: 4 }
+
+export async function getSounds(sciName) {
   const apiKey = getXenoCantoApiKey()
   if (!apiKey) throw new Error("Xeno-canto API key not set in Settings.")
   const encodedName = sciName.replace(/ /g, "%20")
-  const query = `sp:%22${encodedName}%22+q:%22%3EB%22`
-  const url = `${BASE}/recordings?query=${query}&page=${page}&per_page=5&key=${apiKey}`
+  const query = `sp:%22${encodedName}%22+q:%22%3ED%22`
+  const url = `${BASE}/recordings?query=${query}&page=1&per_page=50&key=${apiKey}`
   const data = await apiFetch(url)
-  return {
-    recordings: (data.recordings || []).slice(0, 5),
-    numPages: data.numPages || 1,
-    page: data.page || 1,
-  }
+  const sorted = (data.recordings || [])
+    .sort((a, b) => (QUALITY_RANK[a.q] ?? 9) - (QUALITY_RANK[b.q] ?? 9))
+    .slice(0, 5)
+  return { recordings: sorted }
 }

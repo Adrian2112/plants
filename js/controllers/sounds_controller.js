@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-import { getBirdSounds } from "../services/xeno_canto_api.js"
+import { getSounds } from "../services/xeno_canto_api.js"
 import { getXenoCantoApiKey } from "../services/settings_service.js"
 
 export default class extends Controller {
@@ -7,19 +7,19 @@ export default class extends Controller {
 
   connect() {
     this.sciName = null
-    this.page = 1
-    this.numPages = 1
     this.activeAudio = null
   }
 
   show({ detail: { taxon } }) {
-    if (taxon.iconic_taxon_name !== "Aves") {
+    this.stopAudio()
+    const supported = ["Aves", "Mammalia", "Amphibia", "Insecta"]
+    if (!supported.includes(taxon.iconic_taxon_name)) {
       this.containerTarget.style.display = "none"
+      this.setNavLink(false)
       return
     }
     this.containerTarget.style.display = ""
     this.sciName = taxon.name
-    this.page = 1
 
     if (!getXenoCantoApiKey()) {
       this.gridTarget.innerHTML = `<p class="has-text-grey is-size-7">Add a Xeno-canto API key in <a href="#" data-action="click->settings#open">Settings</a> to load sounds.</p>`
@@ -33,17 +33,15 @@ export default class extends Controller {
 
   async loadSounds() {
     try {
-      const { recordings, numPages, page } = await getBirdSounds(this.sciName, this.page)
-      this.numPages = numPages
+      const { recordings } = await getSounds(this.sciName)
 
-      if (page === 1) this.gridTarget.innerHTML = ""
-
-      if (recordings.length === 0 && page === 1) {
-        this.gridTarget.innerHTML = `<p class="has-text-grey is-size-7">No recordings found.</p>`
-        this.loadMoreTarget.style.display = "none"
+      if (recordings.length === 0) {
+        this.containerTarget.style.display = "none"
+        this.setNavLink(false)
         return
       }
 
+      this.gridTarget.innerHTML = ""
       this.gridTarget.insertAdjacentHTML("beforeend", recordings.map(r => `
         <div class="sound-item">
           <div class="sound-info">
@@ -57,9 +55,11 @@ export default class extends Controller {
         </div>
       `).join(""))
 
-      this.loadMoreTarget.style.display = page < numPages ? "" : "none"
+      this.loadMoreTarget.style.display = "none"
+      this.setNavLink(true)
     } catch {
-      this.gridTarget.innerHTML = `<p class="has-text-grey is-size-7">Unable to load sounds.</p>`
+      this.containerTarget.style.display = "none"
+      this.setNavLink(false)
     }
   }
 
@@ -83,18 +83,24 @@ export default class extends Controller {
     audio.onerror = () => { btn.textContent = "▶"; delete btn.dataset.active; this.activeAudio = null }
   }
 
-  onLoadMore(event) {
-    event.preventDefault()
-    this.page++
-    this.loadSounds()
+  setNavLink(visible) {
+    const link = document.querySelector("a[href='#section-sounds']")
+    if (link) link.style.display = visible ? "" : "none"
   }
 
   skeletons() {
     return Array(4).fill(`<div class="sound-item skeleton" style="height:4rem;border-radius:6px;"></div>`).join("")
   }
 
+  stopAudio() {
+    if (this.activeAudio) {
+      this.activeAudio.pause()
+      this.activeAudio = null
+    }
+  }
+
   disconnect() {
-    this.activeAudio?.pause()
+    this.stopAudio()
   }
 }
 
