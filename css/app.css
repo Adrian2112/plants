@@ -739,6 +739,52 @@ p, .content {
   color: var(--text);
 }
 
+/* Sounds */
+
+.sound-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.sound-item:last-child { border-bottom: none; }
+
+.sound-info { flex: 1; min-width: 0; }
+
+.sound-type {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.sound-meta { margin-top: 0.15rem; }
+
+
+.sound-play-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  flex-shrink: 0;
+}
+
+.sound-play-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-primary);
+}
+.sound-play-btn:hover { border-color: #4CAF50; color: #4CAF50; }
+
 /* Notes */
 
 .notes-card {

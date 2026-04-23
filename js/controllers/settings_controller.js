@@ -1,13 +1,14 @@
 import { Controller } from "@hotwired/stimulus"
-import { getUsername, getPrimaryLanguage, getSecondaryLanguage, saveSettings, LANGUAGES } from "../services/settings_service.js"
+import { getUsername, getPrimaryLanguage, getSecondaryLanguage, getXenoCantoApiKey, saveSettings, LANGUAGES } from "../services/settings_service.js"
 
 export default class extends Controller {
-  static targets = ["modal", "usernameInput", "primaryLanguageSelect", "secondaryLanguageSelect"]
+  static targets = ["modal", "usernameInput", "primaryLanguageSelect", "secondaryLanguageSelect", "xenoCantoApiKeyInput"]
 
   open() {
     this.usernameInputTarget.value = getUsername() || ""
     this.renderLanguageOptions(this.primaryLanguageSelectTarget, getPrimaryLanguage(), false)
     this.renderLanguageOptions(this.secondaryLanguageSelectTarget, getSecondaryLanguage(), true)
+    this.xenoCantoApiKeyInputTarget.value = getXenoCantoApiKey() || ""
     this.modalTarget.classList.add("is-active")
   }
 
@@ -26,7 +27,8 @@ export default class extends Controller {
     const username = this.usernameInputTarget.value.trim()
     const primaryLanguage = this.primaryLanguageSelectTarget.value || "en"
     const secondaryLanguage = this.secondaryLanguageSelectTarget.value || null
-    saveSettings({ username, primaryLanguage, secondaryLanguage })
+    const xenoCantoApiKey = this.xenoCantoApiKeyInputTarget.value.trim() || null
+    saveSettings({ username, primaryLanguage, secondaryLanguage, xenoCantoApiKey })
     this.close()
     this.dispatch("changed", { target: document.documentElement, detail: { username } })
   }

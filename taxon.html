@@ -105,6 +105,7 @@
         <a href="#section-seasonality">Seasonality</a>
         <a href="#section-map">Distribution</a>
         <a href="#section-notes">Notes</a>
+        <a href="#section-sounds">Sounds</a>
         <a href="#section-photos">Photos</a>
       </nav>
 
@@ -153,6 +154,16 @@
               <button type="button" class="button is-small" data-action="click->notes#hideForm">Cancel</button>
             </div>
           </form>
+        </div>
+      </div>
+
+      <div id="section-sounds" data-controller="sounds" data-action="search:loaded@document->sounds#show" data-sounds-target="container" style="display:none;">
+        <div class="box mt-4">
+          <h2 class="title is-5 mb-3">Sounds</h2>
+          <div data-sounds-target="grid"></div>
+          <div class="has-text-centered mt-3" data-sounds-target="loadMore" style="display:none;">
+            <a class="button is-small is-outlined" data-action="click->sounds#onLoadMore">Load more</a>
+          </div>
         </div>
       </div>
 
@@ -227,6 +238,13 @@
             </div>
           </div>
           <p class="help">Shows an additional name below the primary name.</p>
+        </div>
+        <div class="field">
+          <label class="label">Xeno-canto API Key</label>
+          <div class="control">
+            <input class="input" type="text" placeholder="your_api_key" data-settings-target="xenoCantoApiKeyInput">
+          </div>
+          <p class="help">Required to load bird sounds.</p>
         </div>
       </section>
       <footer class="modal-card-foot" style="gap:0.5rem;">

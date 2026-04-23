@@ -30,12 +30,14 @@ export const LANGUAGES = [
 export function getUsername() { return getAll().username || null }
 export function getPrimaryLanguage() { return getAll().primaryLanguage || "en" }
 export function getSecondaryLanguage() { return getAll().secondaryLanguage || null }
+export function getXenoCantoApiKey() { return getAll().xenoCantoApiKey || null }
 
-export function saveSettings({ username, primaryLanguage, secondaryLanguage }) {
+export function saveSettings({ username, primaryLanguage, secondaryLanguage, xenoCantoApiKey }) {
   localStorage.setItem(KEY, JSON.stringify({
     ...getAll(),
     username: username || null,
     primaryLanguage: primaryLanguage || "en",
     secondaryLanguage: secondaryLanguage || null,
+    xenoCantoApiKey: xenoCantoApiKey || null,
   }))
 }
