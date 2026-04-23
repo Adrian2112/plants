@@ -29,8 +29,7 @@
 
   <script type="module" src="./js/application.js"></script>
 </head>
-<body data-controller="search bookmark settings observations" data-search-navigate-to="taxon.html"
-      data-action="settings:changed@document->observations#onSettingsChanged">
+<body data-controller="search bookmark settings" data-search-navigate-to="taxon.html">
   <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation" style="background-color:#16213e;border-bottom:1px solid #2d3a52;" data-controller="location">
     <div class="container">
       <div class="navbar-brand">
@@ -87,12 +86,12 @@
 
       <div data-search-target="error"></div>
 
-      <!-- Filter input shared by both lists -->
+      <!-- Filter input shared by all lists -->
       <div class="field mb-4 mt-4">
         <div class="control has-icons-left">
-          <input class="input" type="text" placeholder="Filter plants…"
+          <input class="input" type="text" placeholder="Filter…"
             data-bookmark-target="filterInput"
-            data-action="input->bookmark#onFilter input->observations#onFilter">
+            data-action="input->bookmark#onFilter input->observations#onFilter input->nearby#onFilter">
           <span class="icon is-left">🔍</span>
         </div>
       </div>
@@ -109,11 +108,23 @@
       </div>
 
       <!-- Species I've observed -->
-      <div data-observations-target="section" style="display:none;">
-        <div class="is-flex is-justify-content-space-between is-align-items-center mb-3 mt-5">
-          <h2 class="title is-5 mb-0">Species I've Observed</h2>
-        </div>
-        <div data-observations-target="list"></div>
+      <div data-controller="observations" data-action="settings:changed@document->observations#onSettingsChanged">
+        <details class="mt-5" data-observations-target="details" data-action="toggle->observations#onToggle">
+          <summary class="title is-5 mb-0" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:0.5rem;">
+            <span>Species I've Observed</span>
+          </summary>
+          <div data-observations-target="list" class="mt-3"></div>
+        </details>
+      </div>
+
+      <!-- Species near me -->
+      <div data-controller="nearby">
+        <details class="mt-5" data-nearby-target="details" data-action="toggle->nearby#onToggle">
+          <summary class="title is-5 mb-0" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:0.5rem;">
+            <span data-nearby-target="title">Species Near Me</span>
+          </summary>
+          <div data-nearby-target="list" class="mt-3"></div>
+        </details>
       </div>
 
     </div>

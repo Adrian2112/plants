@@ -66,7 +66,10 @@ export default class extends Controller {
             <h1 class="title is-3 mb-0">${commonName}</h1>
             <button class="plant-star-btn" data-bookmark-target="star" data-action="click->bookmark#toggle">☆</button>
           </div>
-          <p class="subtitle is-5 is-italic has-text-grey mb-1">${scientificName}</p>
+          <p class="subtitle is-5 is-italic has-text-grey mb-1">
+            ${scientificName}
+            <a href="https://www.inaturalist.org/taxa/${taxon.id}" target="_blank" rel="noopener" class="is-size-7 ml-2" style="font-style:normal;">iNat ↗</a>
+          </p>
           <p class="plant-secondary-name is-size-6 has-text-grey-light mb-2" style="${getSecondaryLanguage() ? "" : "display:none;"}"></p>
           ${ancestors ? `<p class="is-size-7 has-text-grey-light mb-4">${ancestors}</p>` : ""}
           <div class="is-hidden-touch">${aboutBox}</div>

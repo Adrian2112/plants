@@ -16,6 +16,7 @@ import LocationController from "./controllers/location_controller.js"
 import SettingsController from "./controllers/settings_controller.js"
 import ObservationsController from "./controllers/observations_controller.js"
 import SoundsController from "./controllers/sounds_controller.js"
+import NearbyController from "./controllers/nearby_controller.js"
 
 const app = Application.start()
 app.register("search", SearchController)
@@ -29,6 +30,7 @@ app.register("location", LocationController)
 app.register("settings", SettingsController)
 app.register("observations", ObservationsController)
 app.register("sounds", SoundsController)
+app.register("nearby", NearbyController)
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/sw.js").catch(() => {})

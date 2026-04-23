@@ -1,27 +1,32 @@
 import { Controller } from "@hotwired/stimulus"
-import { getUserSpecies } from "../services/inat_api.js"
-import { getUsername, getPrimaryLanguage, getSecondaryLanguage, LANGUAGES } from "../services/settings_service.js"
-import { getActiveCoords, onLocationChange } from "../services/location_service.js"
+import { getNearbySpecies } from "../services/inat_api.js"
+import { getPrimaryLanguage, getSecondaryLanguage, LANGUAGES } from "../services/settings_service.js"
+import { getActiveCoords, isCustomLocation, getLocationName, onLocationChange } from "../services/location_service.js"
 import { getDisplayName } from "../services/taxon_filters.js"
 
 export default class extends Controller {
-  static targets = ["details", "list"]
+  static targets = ["details", "list", "title"]
 
   connect() {
     this.allSpecies = []
     this.filterValue = ""
     this.secondaryNames = {}
     this.loaded = false
-    this.cleanupLocationListener = onLocationChange(() => { this.loaded = false; if (this.detailsTarget.open) this.load() })
+    this.cleanupLocationListener = onLocationChange(() => {
+      this.updateTitle()
+      this.loaded = false
+      if (this.detailsTarget.open) this.load()
+    })
+    this.updateTitle()
   }
 
   disconnect() {
     this.cleanupLocationListener?.()
   }
 
-  onSettingsChanged() {
-    this.loaded = false
-    if (this.detailsTarget.open) this.load()
+  updateTitle() {
+    const name = isCustomLocation() ? (getLocationName() || "Location") : null
+    this.titleTarget.textContent = name ? `Species Near ${name}` : "Species Near Me"
   }
 
   onToggle() {
@@ -30,25 +35,23 @@ export default class extends Controller {
 
   onFilter({ target: { value } }) {
     this.filterValue = value.toLowerCase().trim()
-    this.renderItems()
+    if (this.loaded) this.renderItems()
   }
 
   async load() {
-    const username = getUsername()
-    if (!username) {
-      this.detailsTarget.style.display = "none"
+    const coords = getActiveCoords()
+    if (!coords) {
+      this.listTarget.innerHTML = `<p class="has-text-grey is-size-7">Enable the Near Me toggle to see nearby species.</p>`
       return
     }
-    this.detailsTarget.style.display = ""
     this.listTarget.innerHTML = `<p class="has-text-grey">Loading…</p>`
 
     try {
-      const coords = getActiveCoords() || {}
-      this.allSpecies = await getUserSpecies(username, { ...coords, locale: getPrimaryLanguage() })
+      this.allSpecies = await getNearbySpecies({ ...coords, locale: getPrimaryLanguage() })
 
       const secondaryLocale = getSecondaryLanguage()
       if (secondaryLocale) {
-        const secondary = await getUserSpecies(username, { ...coords, locale: secondaryLocale })
+        const secondary = await getNearbySpecies({ ...coords, locale: secondaryLocale })
         this.secondaryNames = Object.fromEntries(secondary.map(({ taxon }) => [taxon.id, taxon.preferred_common_name || ""]))
       } else {
         this.secondaryNames = {}
@@ -57,7 +60,7 @@ export default class extends Controller {
       this.loaded = true
       this.renderItems()
     } catch {
-      this.listTarget.innerHTML = `<p class="has-text-grey">Unable to load observations.</p>`
+      this.listTarget.innerHTML = `<p class="has-text-grey">Unable to load nearby species.</p>`
     }
   }
 

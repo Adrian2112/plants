@@ -80,6 +80,17 @@ export async function getUserSpecies(username, { lat, lng, radius, locale = "en"
   })
 }
 
+export async function getNearbySpecies({ lat, lng, radius, locale = "en" } = {}) {
+  if (lat == null || lng == null) return []
+  let url = `${BASE}/observations/species_counts?per_page=500&locale=${locale}&lat=${lat}&lng=${lng}&radius=${radius ?? 50}`
+  const data = await apiFetch(url)
+  return data.results.sort((a, b) => {
+    const nameA = a.taxon.preferred_common_name || a.taxon.name
+    const nameB = b.taxon.preferred_common_name || b.taxon.name
+    return nameA.localeCompare(nameB)
+  })
+}
+
 export async function getObservation(id) {
   const data = await apiFetch(`${BASE}/observations/${id}`)
   const result = data.results[0]

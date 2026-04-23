@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-import { onCoordsReady, setActiveLocation, isCustomLocation, isLocationEnabled, onLocationChange } from "../services/location_service.js"
+import { onCoordsReady, getActiveCoords, setActiveLocation, isCustomLocation, isLocationEnabled, onLocationChange } from "../services/location_service.js"
 
 const DEFAULT_CENTER = [20, 0]
 const DEFAULT_ZOOM = 3
@@ -50,6 +50,9 @@ export default class extends Controller {
         maxZoom: 16,
       }).addTo(this.map)
 
+      if (isCustomLocation()) {
+        this.restoreCustomLocation(L)
+      }
       this.locateUser(L)
     }
 
@@ -91,9 +94,19 @@ export default class extends Controller {
     setActiveLocation(center.lat, center.lng, radiusKm)
   }
 
+  restoreCustomLocation(L) {
+    const coords = getActiveCoords()
+    if (!coords) return
+    this.map.setView([coords.lat, coords.lng], USER_ZOOM)
+    if (this.customMarker) this.customMarker.remove()
+    this.customMarker = L.circleMarker([coords.lat, coords.lng], {
+      radius: 6, color: "#ff9800", fillColor: "#ff9800", fillOpacity: 0.9,
+    }).addTo(this.map)
+  }
+
   locateUser(L) {
     onCoordsReady(({ lat, lng }) => {
-      this.map.setView([lat, lng], USER_ZOOM)
+      if (!isCustomLocation()) this.map.setView([lat, lng], USER_ZOOM)
       L.circleMarker([lat, lng], {
         radius: 6, color: "#4CAF50", fillColor: "#4CAF50", fillOpacity: 0.8,
       }).addTo(this.map)
