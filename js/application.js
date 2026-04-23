@@ -13,6 +13,8 @@ import BookmarkController from "./controllers/bookmark_controller.js"
 import NotesController from "./controllers/notes_controller.js"
 import MapController from "./controllers/map_controller.js"
 import LocationController from "./controllers/location_controller.js"
+import SettingsController from "./controllers/settings_controller.js"
+import ObservationsController from "./controllers/observations_controller.js"
 
 const app = Application.start()
 app.register("search", SearchController)
@@ -23,6 +25,8 @@ app.register("bookmark", BookmarkController)
 app.register("notes", NotesController)
 app.register("map", MapController)
 app.register("location", LocationController)
+app.register("settings", SettingsController)
+app.register("observations", ObservationsController)
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/sw.js").catch(() => {})

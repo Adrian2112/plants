@@ -62,6 +62,17 @@ export async function getObservationPhotos(taxonId, { termId, termValueId, page 
   return { photos, totalResults: data.total_results, page }
 }
 
+export async function getUserSpecies(username, { lat, lng, radius } = {}) {
+  let url = `${BASE}/observations/species_counts?user_login=${encodeURIComponent(username)}&per_page=500`
+  if (lat != null && lng != null) url += `&lat=${lat}&lng=${lng}&radius=${radius ?? 200}`
+  const data = await apiFetch(url)
+  return data.results.sort((a, b) => {
+    const nameA = a.taxon.preferred_common_name || a.taxon.name
+    const nameB = b.taxon.preferred_common_name || b.taxon.name
+    return nameA.localeCompare(nameB)
+  })
+}
+
 export async function getObservation(id) {
   const data = await apiFetch(`${BASE}/observations/${id}`)
   const result = data.results[0]

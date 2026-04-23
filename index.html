@@ -2,7 +2,7 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="description" content="PlantScope — explore plant info, photos, and seasonality from iNaturalist">
   <meta property="og:title" content="PlantScope">
   <meta property="og:description" content="Explore plant info, photos, and seasonality from iNaturalist">
@@ -29,7 +29,8 @@
 
   <script type="module" src="./js/application.js"></script>
 </head>
-<body data-controller="search bookmark" data-search-navigate-to="taxon.html">
+<body data-controller="search bookmark settings observations" data-search-navigate-to="taxon.html"
+      data-action="settings:changed@document->observations#onSettingsChanged">
   <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation" style="background-color:#16213e;border-bottom:1px solid #2d3a52;" data-controller="location">
     <div class="container">
       <div class="navbar-brand">
@@ -38,10 +39,9 @@
           <span>PlantScope</span>
         </a>
         <div class="navbar-item is-hidden-desktop" data-location-target="toggle"></div>
-        <a class="navbar-item is-hidden-desktop" href="index.html" style="color:#a0aec0;">
-          <span class="icon"><span>☆</span></span>
-          <span>Saved</span>
-        </a>
+        <button class="navbar-item is-hidden-desktop button is-ghost" data-action="click->settings#open" style="color:#a0aec0;background:none;border:none;cursor:pointer;">
+          ⚙️
+        </button>
       </div>
 
       <div class="navbar-menu">
@@ -60,9 +60,9 @@
         </div>
         <div class="navbar-end">
           <div class="navbar-item is-hidden-touch" data-location-target="toggle"></div>
-          <a class="navbar-item" href="index.html" style="color:#a0aec0;">
-            <span class="icon"><span>☆</span></span>
-            <span>Saved</span>
+          <a class="navbar-item" href="#" data-action="click->settings#open" style="color:#a0aec0;">
+            <span class="icon"><span>⚙️</span></span>
+            <span>Settings</span>
           </a>
         </div>
       </div>
@@ -87,26 +87,61 @@
 
       <div data-search-target="error"></div>
 
-      <!-- Saved plants panel -->
-      <div data-bookmark-target="panel" class="mt-4">
+      <!-- Filter input shared by both lists -->
+      <div class="field mb-4 mt-4">
+        <div class="control has-icons-left">
+          <input class="input" type="text" placeholder="Filter plants…"
+            data-bookmark-target="filterInput"
+            data-action="input->bookmark#onFilter input->observations#onFilter">
+          <span class="icon is-left">🔍</span>
+        </div>
+      </div>
+
+      <!-- Saved plants -->
+      <div data-bookmark-target="panel">
         <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
           <h2 class="title is-5 mb-0">
             Saved Plants
             <span class="saved-panel-count" data-bookmark-target="savedCount" style="display:none;"></span>
           </h2>
         </div>
-        <div class="field mb-4">
-          <div class="control has-icons-left">
-            <input class="input" type="text" placeholder="Filter saved plants..."
-              data-bookmark-target="filterInput"
-              data-action="input->bookmark#onFilter">
-            <span class="icon is-left">🔍</span>
-          </div>
-        </div>
         <div class="bookmarks-list" data-bookmark-target="list"></div>
+      </div>
+
+      <!-- Species I've observed -->
+      <div data-observations-target="section" style="display:none;">
+        <div class="is-flex is-justify-content-space-between is-align-items-center mb-3 mt-5">
+          <h2 class="title is-5 mb-0">Species I've Observed</h2>
+        </div>
+        <div data-observations-target="list"></div>
       </div>
 
     </div>
   </main>
+
+  <!-- Settings modal -->
+  <div class="modal" data-settings-target="modal">
+    <div class="modal-background" data-action="click->settings#close"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Settings</p>
+        <button class="delete" aria-label="close" data-action="click->settings#close"></button>
+      </header>
+      <section class="modal-card-body">
+        <div class="field">
+          <label class="label">iNaturalist Username</label>
+          <div class="control">
+            <input class="input" type="text" placeholder="your_username" data-settings-target="usernameInput">
+          </div>
+          <p class="help">Used to show species you've personally observed.</p>
+        </div>
+      </section>
+      <footer class="modal-card-foot" style="gap:0.5rem;">
+        <button class="button is-success" data-action="click->settings#save">Save</button>
+        <button class="button" data-action="click->settings#close">Cancel</button>
+      </footer>
+    </div>
+  </div>
+
 </body>
 </html>
