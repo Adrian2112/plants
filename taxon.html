@@ -35,6 +35,7 @@
           <span>PlantScope</span>
         </a>
         <div class="navbar-item is-hidden-desktop ml-auto" data-location-target="toggle"></div>
+        <a class="navbar-item is-hidden-desktop" href="pokedex.html" style="color:#a0aec0;font-size:1.1rem;">📖</a>
         <button class="navbar-item is-hidden-desktop button is-ghost" data-action="click->settings#open" style="color:#a0aec0;background:none;border:none;cursor:pointer;">
           ⚙️
         </button>
@@ -56,6 +57,10 @@
         </div>
         <div class="navbar-end">
           <div class="navbar-item is-hidden-touch" data-location-target="toggle"></div>
+          <a class="navbar-item" href="pokedex.html" style="color:#a0aec0;">
+            <span class="icon"><span>📖</span></span>
+            <span>Field Guide</span>
+          </a>
           <a class="navbar-item" href="#" data-action="click->settings#open" style="color:#a0aec0;">
             <span class="icon"><span>⚙️</span></span>
             <span>Settings</span>
@@ -170,9 +175,9 @@
       <div id="section-photos" data-controller="gallery" data-action="search:loaded@document->gallery#show">
         <div class="box mt-4">
           <h2 class="title is-5 mb-3">Photos</h2>
-          <div data-gallery-target="mineSection" style="display:none;">
-            <p class="is-size-7 has-text-grey mb-2" style="text-transform:uppercase;letter-spacing:0.05em;">My observations</p>
-            <div class="gallery-grid mb-4" data-gallery-target="mineGrid"></div>
+          <div class="mine-photos-section" data-gallery-target="mineSection" style="display:none;">
+            <p class="mine-photos-title">My observations</p>
+            <div class="gallery-grid" data-gallery-target="mineGrid"></div>
           </div>
           <div class="tabs is-small is-toggle gallery-tabs">
             <ul data-gallery-target="tabs"></ul>
