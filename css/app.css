@@ -645,26 +645,36 @@ a:not(.button):not(.navbar-item):not(.dropdown-item) {
   cursor: pointer;
 }
 
-.gallery-item:has(.gallery-item-place) {
+.gallery-item:has(.gallery-item-meta) {
   aspect-ratio: unset;
   overflow: visible;
   display: flex;
   flex-direction: column;
 }
 
-.gallery-item:has(.gallery-item-place) img {
+.gallery-item:has(.gallery-item-meta) img {
   aspect-ratio: 1;
   border-radius: 6px 6px 0 0;
 }
 
-.gallery-item-place {
-  font-size: 0.62rem;
-  color: var(--text-muted);
-  background: var(--surface-light);
-  border: 1px solid var(--border);
-  border-top: none;
+.gallery-item-meta {
+  background: white;
   border-radius: 0 0 6px 6px;
-  padding: 0.2rem 0.4rem;
+  padding: 0.25rem 0.4rem;
+}
+
+.gallery-item-date {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gallery-item-place {
+  font-size: 0.6rem;
+  color: #666;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -700,11 +710,30 @@ a:not(.button):not(.navbar-item):not(.dropdown-item) {
   border-radius: 6px;
 }
 
+/* Mine photos section */
+
+.mine-photos-section {
+  border-radius: 10px;
+  padding: 0.75rem;
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+}
+
+.mine-photos-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.6rem;
+}
+
 /* Lightbox */
 
 .lightbox-content {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   max-width: 90vw;
@@ -740,14 +769,25 @@ a:not(.button):not(.navbar-item):not(.dropdown-item) {
 }
 
 .lightbox-caption {
-  position: absolute;
-  bottom: -2rem;
-  left: 0;
-  right: 0;
   text-align: center;
   color: white;
   font-size: 0.75rem;
   text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  margin-top: 0.5rem;
+  padding: 0 0.5rem;
+}
+
+.lightbox-obs-link {
+  display: block;
+  margin-top: 0.35rem;
+  color: #81C784;
+  font-size: 0.75rem;
+  text-decoration: none;
+}
+
+.lightbox-obs-link:hover {
+  text-decoration: underline;
+  color: #a5d6a7;
 }
 
 /* Bookmarks page */

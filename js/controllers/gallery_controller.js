@@ -135,7 +135,11 @@ export default class extends Controller {
       this.mineGridTarget.innerHTML = photos.map((p, i) => `
         <div class="gallery-item" data-action="click->gallery#openMineLightbox" data-mine-index="${i}">
           <img src="${p.small}" alt="My observation" loading="lazy">
-          ${p.place ? `<div class="gallery-item-place">📍 ${p.place}</div>` : ""}
+          ${(p.date || p.place) ? `
+            <div class="gallery-item-meta">
+              ${p.date ? `<div class="gallery-item-date">${p.date}</div>` : ""}
+              ${p.place ? `<div class="gallery-item-place">📍 ${p.place}</div>` : ""}
+            </div>` : ""}
         </div>
       `).join("")
     } catch { /* silently skip */ }
@@ -185,6 +189,7 @@ export default class extends Controller {
       <span>${photo.attribution || ""}</span>
       ${photo.date ? `<span class="ml-2">${photo.date}</span>` : ""}
       ${photo.place ? `<span class="ml-2">📍 ${photo.place}</span>` : ""}
+      ${photo.obsId ? `<a href="https://www.inaturalist.org/observations/${photo.obsId}" target="_blank" rel="noopener" class="lightbox-obs-link">View on iNaturalist ↗</a>` : ""}
     `
   }
 
