@@ -21,7 +21,7 @@ async function reverseGeocode(lat, lng) {
     if (!res.ok) return null
     const data = await res.json()
     const a = data.address || {}
-    return [a.city, a.state].join(', ')
+    return [a.city, a.state].filter(x => x).join(', ')
     // a.city || a.town || a.village || a.county || a.state || null
   } catch { return null }
 }
