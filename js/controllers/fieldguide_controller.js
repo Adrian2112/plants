@@ -21,7 +21,7 @@ export default class extends Controller {
     "filterLabel", "seasonLabel", "sortLabel",
     "search", "locationName", "radiusBadge",
     "totalSeen", "totalUnseen", "totalTotal",
-    "sheet", "sheetBackdrop", "sheetThumb", "sheetName", "sheetSci", "sheetObs",
+    "sheet", "sheetBackdrop", "sheetThumb", "sheetName", "sheetSecondary", "sheetSci", "sheetObs",
     "sheetBadges", "sheetMapContainer", "sheetChart", "sheetLink",
     "areaPicker", "areaMap",
   ]
@@ -434,10 +434,10 @@ export default class extends Controller {
       : `<span style="font-size:2.5rem;">${TAB_ICONS[el.dataset.taxonGroup] || "🌍"}</span>`
 
     this.sheetNameTarget.textContent = taxonName
+    this.sheetSecondaryTarget.textContent = taxonSecondary || ""
+    this.sheetSecondaryTarget.style.display = taxonSecondary ? "" : "none"
     this.sheetSciTarget.textContent  = taxonSci
-    this.sheetObsTarget.innerHTML    =
-      `${parseInt(taxonCount).toLocaleString()} observations nearby`
-      + (taxonSecondary ? ` · <em style="color:var(--text-secondary);font-style:normal;">${taxonSecondary}</em>` : "")
+    this.sheetObsTarget.textContent  = `${parseInt(taxonCount).toLocaleString()} observations nearby`
     this.sheetLinkTarget.href        = `taxon.html?taxon_id=${taxonId}`
 
     const seasonBadge = inSeason
