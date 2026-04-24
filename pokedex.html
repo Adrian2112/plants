@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Field Guide — PlantScope</title>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9/dist/leaflet.min.css">
+  <link rel="stylesheet" href="./css/app.css">
+  <link rel="stylesheet" href="./css/pokedex.css">
+
+  <script type="importmap">
+  {
+    "imports": {
+      "@hotwired/turbo":    "https://cdn.jsdelivr.net/npm/@hotwired/turbo@8/dist/turbo.es2017-esm.js",
+      "@hotwired/stimulus": "https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3/dist/stimulus.js",
+      "leaflet":            "https://cdn.jsdelivr.net/npm/leaflet@1.9/dist/leaflet-src.esm.js"
+    }
+  }
+  </script>
+  <script type="module" src="./js/application.js"></script>
+</head>
+<body>
+
+  <nav class="navbar is-fixed-top" role="navigation" style="background-color:#16213e;border-bottom:1px solid #2d3a52;">
+    <div class="container">
+      <div class="navbar-brand">
+        <a class="navbar-item has-text-weight-bold" href="index.html" style="color:#4CAF50;">
+          <span class="icon mr-1"><span>🌿</span></span>
+          <span>PlantScope</span>
+        </a>
+      </div>
+      <div class="navbar-menu">
+        <div class="navbar-end">
+          <a class="navbar-item" href="index.html" style="color:#a0aec0;">Home</a>
+          <a class="navbar-item" href="pokedex.html" style="color:#4CAF50;font-weight:600;">Field Guide</a>
+          <a class="navbar-item" href="#" style="color:#a0aec0;">⚙️ Settings</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="section pt-5"
+        data-controller="fieldguide"
+        data-fieldguide-filter-value="all"
+        data-fieldguide-season-value="any"
+        data-fieldguide-sort-value="popular"
+        data-fieldguide-radius-value="50">
+    <div class="container">
+
+      <!-- Header -->
+      <div class="dex-header mb-4">
+        <div>
+          <h1 class="title is-4 mb-1">Field Guide</h1>
+          <div class="dex-location">
+            <span style="color:#FF9800;font-size:0.85rem;">📍</span>
+            <span class="dex-location-name" data-fieldguide-target="locationName">—</span>
+          </div>
+        </div>
+        <div class="dex-totals">
+          <div class="dex-total-item">
+            <span class="dex-total-num" style="color:#4CAF50;" data-fieldguide-target="totalSeen">—</span>
+            <span class="dex-total-label">seen</span>
+          </div>
+          <div class="dex-total-divider"></div>
+          <div class="dex-total-item">
+            <span class="dex-total-num" style="color:#a0aec0;" data-fieldguide-target="totalUnseen">—</span>
+            <span class="dex-total-label">unseen</span>
+          </div>
+          <div class="dex-total-divider"></div>
+          <div class="dex-total-item">
+            <span class="dex-total-num" data-fieldguide-target="totalTotal">—</span>
+            <span class="dex-total-label">total</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map area picker -->
+      <details class="dex-map-panel mb-4"
+               data-fieldguide-target="areaPicker"
+               data-action="toggle->fieldguide#onAreaPickerToggle">
+        <summary class="dex-map-summary">
+          <span>🗺 Map area</span>
+          <span class="dex-map-radius-badge" data-fieldguide-target="radiusBadge">50 km radius</span>
+        </summary>
+        <div class="dex-map-body">
+          <div data-fieldguide-target="areaMap" style="height:200px;border-radius:8px;overflow:hidden;"></div>
+          <div class="dex-radius-row mt-3">
+            <span class="dex-radius-label">Radius</span>
+            <div class="dex-radius-pills">
+              <button class="dex-radius-pill" data-radius="10"  data-action="click->fieldguide#selectRadius">10 km</button>
+              <button class="dex-radius-pill" data-radius="25"  data-action="click->fieldguide#selectRadius">25 km</button>
+              <button class="dex-radius-pill is-active" data-radius="50" data-action="click->fieldguide#selectRadius">50 km</button>
+              <button class="dex-radius-pill" data-radius="100" data-action="click->fieldguide#selectRadius">100 km</button>
+              <button class="dex-radius-pill" data-radius="200" data-action="click->fieldguide#selectRadius">200 km</button>
+            </div>
+          </div>
+          <button class="button is-success is-small is-fullwidth mt-3"
+                  data-action="click->fieldguide#applyArea">Apply area</button>
+        </div>
+      </details>
+
+      <!-- Filter + sort toolbar -->
+      <div class="dex-toolbar mb-3">
+
+        <!-- Seen/Unseen filter -->
+        <div class="dropdown dex-dropdown" id="filterDropdown">
+          <div class="dropdown-trigger">
+            <button class="button dex-dd-btn" aria-haspopup="true" aria-controls="filterMenu"
+                    data-action="click->fieldguide#toggleFilterDropdown">
+              <span data-fieldguide-target="filterLabel">All</span>
+              <span class="dex-dd-caret">▾</span>
+            </button>
+          </div>
+          <div class="dropdown-menu dex-dd-menu" id="filterMenu" role="menu">
+            <div class="dropdown-content dex-dd-content">
+              <a class="dropdown-item dex-dd-item is-active"
+                 data-value="all" data-action="click->fieldguide#setFilter">All species</a>
+              <a class="dropdown-item dex-dd-item"
+                 data-value="unseen" data-action="click->fieldguide#setFilter">Unseen only</a>
+              <a class="dropdown-item dex-dd-item"
+                 data-value="seen" data-action="click->fieldguide#setFilter">Seen only</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Season filter -->
+        <div class="dropdown dex-dropdown" id="seasonDropdown">
+          <div class="dropdown-trigger">
+            <button class="button dex-dd-btn" aria-haspopup="true" aria-controls="seasonMenu"
+                    data-action="click->fieldguide#toggleSeasonDropdown">
+              <span data-fieldguide-target="seasonLabel">Any season</span>
+              <span class="dex-dd-caret">▾</span>
+            </button>
+          </div>
+          <div class="dropdown-menu dex-dd-menu" id="seasonMenu" role="menu">
+            <div class="dropdown-content dex-dd-content">
+              <a class="dropdown-item dex-dd-item is-active"
+                 data-value="any" data-action="click->fieldguide#setSeason">Any season</a>
+              <a class="dropdown-item dex-dd-item"
+                 data-value="inseason" data-action="click->fieldguide#setSeason">🌱 In season</a>
+              <a class="dropdown-item dex-dd-item"
+                 data-value="soon" data-action="click->fieldguide#setSeason">🔜 Coming soon</a>
+              <a class="dropdown-item dex-dd-item"
+                 data-value="off" data-action="click->fieldguide#setSeason">❄ Off season</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sort dropdown -->
+        <div class="dropdown dex-dropdown" id="sortDropdown">
+          <div class="dropdown-trigger">
+            <button class="button dex-dd-btn" aria-haspopup="true" aria-controls="sortMenu"
+                    data-action="click->fieldguide#toggleSortDropdown">
+              <span data-fieldguide-target="sortLabel">↓ Popular</span>
+              <span class="dex-dd-caret">▾</span>
+            </button>
+          </div>
+          <div class="dropdown-menu dex-dd-menu" id="sortMenu" role="menu">
+            <div class="dropdown-content dex-dd-content">
+              <a class="dropdown-item dex-dd-item is-active"
+                 data-value="popular" data-action="click->fieldguide#setSort">↓ Most popular</a>
+              <a class="dropdown-item dex-dd-item"
+                 data-value="availability" data-action="click->fieldguide#setSort">↓ Availability</a>
+              <a class="dropdown-item dex-dd-item"
+                 data-value="az" data-action="click->fieldguide#setSort">A → Z</a>
+              <a class="dropdown-item dex-dd-item"
+                 data-value="unseen" data-action="click->fieldguide#setSort">Unseen first</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Search -->
+      <div class="field mb-3">
+        <div class="control has-icons-left">
+          <input class="input" type="text" placeholder="Filter species…"
+                 data-fieldguide-target="search"
+                 data-action="input->fieldguide#onSearch">
+          <span class="icon is-left" style="font-size:0.9rem;">🔍</span>
+        </div>
+      </div>
+
+      <!-- Panel -->
+      <nav class="panel dex-panel">
+        <div class="dex-panel-tabs" data-fieldguide-target="tabs"></div>
+        <div data-fieldguide-target="contents">
+          <div style="padding:2rem 1rem;text-align:center;color:var(--text-muted);">
+            <p style="font-size:0.875rem;">Waiting for location…</p>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Bottom sheet backdrop -->
+    <div class="dex-sheet-backdrop"
+         data-fieldguide-target="sheetBackdrop"
+         data-action="click->fieldguide#closeSheet"></div>
+
+    <!-- Bottom sheet -->
+    <div class="dex-sheet" data-fieldguide-target="sheet">
+    <div class="dex-sheet-handle"></div>
+    <div class="dex-sheet-content">
+      <div class="dex-sheet-header">
+        <div class="dex-sheet-thumb-lg" data-fieldguide-target="sheetThumb"></div>
+        <div style="flex:1;min-width:0;">
+          <div class="dex-sheet-name" data-fieldguide-target="sheetName"></div>
+          <div class="dex-sheet-sci"  data-fieldguide-target="sheetSci"></div>
+          <div class="dex-sheet-obs"  data-fieldguide-target="sheetObs"></div>
+        </div>
+      </div>
+
+      <div class="dex-sheet-badges mt-3" data-fieldguide-target="sheetBadges"></div>
+
+      <!-- Heatmap -->
+      <div class="dex-sheet-section mt-4">
+        <div class="is-size-7 has-text-grey mb-2">Where to find nearby</div>
+        <div class="dex-sheet-map" data-fieldguide-target="sheetMapContainer"></div>
+      </div>
+
+      <!-- Season chart -->
+      <div class="dex-sheet-section mt-4">
+        <div class="is-size-7 has-text-grey mb-2">Activity by month near you</div>
+        <div class="dex-mini-season" data-fieldguide-target="sheetChart"></div>
+      </div>
+
+      <a href="#" class="button is-success is-fullwidth mt-4"
+         data-fieldguide-target="sheetLink">View full species page →</a>
+    </div>
+  </div>
+
+  </main>
+
+</body>
+</html>

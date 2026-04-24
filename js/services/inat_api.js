@@ -91,6 +91,13 @@ export async function getNearbySpecies({ lat, lng, radius, locale = "en" } = {})
   })
 }
 
+export async function getNearbySpeciesForMonth({ lat, lng, radius, month, locale = "en" } = {}) {
+  if (lat == null || lng == null) return []
+  let url = `${BASE}/observations/species_counts?per_page=500&locale=${locale}&lat=${lat}&lng=${lng}&radius=${radius ?? 50}&month=${month}`
+  const data = await apiFetch(url)
+  return data.results
+}
+
 export async function getObservation(id) {
   const data = await apiFetch(`${BASE}/observations/${id}`)
   const result = data.results[0]

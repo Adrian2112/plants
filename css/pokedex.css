@@ -1,0 +1,740 @@
+/* ============================================
+   Field Guide / Pokédex page styles
+   ============================================ */
+
+/* ── Header ── */
+
+.dex-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.dex-location {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.3rem;
+  flex-wrap: nowrap;
+}
+
+.dex-location-name {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+.dex-location-edit {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  padding: 0.1rem 0.5rem;
+  cursor: pointer;
+  line-height: 1.6;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.dex-location-edit:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.dex-totals {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.55rem 0.9rem;
+  flex-shrink: 0;
+}
+
+.dex-total-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+  gap: 0.1rem;
+}
+
+.dex-total-num {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+
+.dex-total-label {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.dex-total-divider {
+  width: 1px;
+  height: 1.6rem;
+  background: var(--border);
+}
+
+/* ── Map panel ── */
+
+.dex-map-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.dex-map-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  user-select: none;
+  gap: 0.5rem;
+  list-style: none;
+}
+
+.dex-map-summary::before,
+.dex-map-summary::-webkit-details-marker {
+  display: none;
+}
+
+.dex-map-radius-badge {
+  font-size: 0.7rem;
+  background: var(--surface-light);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.1rem 0.55rem;
+  color: var(--text-muted);
+}
+
+.dex-map-body {
+  padding: 0.75rem 1rem 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.dex-radius-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dex-radius-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.dex-radius-pills {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.dex-radius-pill {
+  background: var(--surface-light);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  padding: 0.2rem 0.6rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dex-radius-pill.is-active {
+  background: var(--primary-dark);
+  border-color: var(--primary);
+  color: white;
+}
+
+/* ── Toolbar ── */
+
+.dex-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+/* ── Dropdowns ── */
+
+.dex-dropdown {
+  position: relative;
+  flex: 1 1 0% !important;
+  display: flex !important;
+  flex-direction: column;
+}
+
+/* Right-align menus for the rightmost dropdowns */
+#sortDropdown .dex-dd-menu,
+#seasonDropdown .dex-dd-menu {
+  right: 0;
+  left: auto;
+}
+
+.dex-dd-btn {
+  background: var(--surface-light) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-secondary) !important;
+  font-size: 0.775rem !important;
+  padding: 0.4rem 0.6rem !important;
+  height: auto !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.3rem !important;
+  width: 100% !important;
+  justify-content: space-between !important;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dex-dd-btn:hover {
+  border-color: var(--primary) !important;
+  color: var(--text) !important;
+}
+
+.dex-dd-caret {
+  font-size: 0.65rem;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.dex-dd-menu {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4) !important;
+  min-width: 160px !important;
+  z-index: 30 !important;
+  padding: 0 !important;
+  display: none;
+}
+
+.dropdown.is-active .dex-dd-menu {
+  display: block;
+}
+
+.dex-dd-content {
+  background: transparent !important;
+  padding: 0.35rem !important;
+  box-shadow: none !important;
+}
+
+.dex-dd-item {
+  color: var(--text-secondary) !important;
+  font-size: 0.825rem !important;
+  padding: 0.45rem 0.7rem !important;
+  border-radius: 5px !important;
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+  transition: background 0.1s;
+}
+
+.dex-dd-item:hover {
+  background: var(--surface-light) !important;
+  color: var(--text) !important;
+}
+
+.dex-dd-item.is-active,
+.dex-dd-item.is-active:hover {
+  background: rgba(76,175,80,0.15) !important;
+  color: #81C784 !important;
+  font-weight: 600 !important;
+}
+
+/* Override Bulma's default blue active state on dropdown-item */
+.dropdown-content .dropdown-item.is-active {
+  background: rgba(76,175,80,0.15) !important;
+  color: #81C784 !important;
+}
+
+/* ── Bulma panel overrides ── */
+
+.dex-panel {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  overflow: visible;
+}
+
+
+/* ── Panel tabs ── */
+
+.dex-panel-tabs {
+  display: flex !important;
+  flex-direction: row !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  flex-wrap: nowrap !important;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  border-bottom: 1px solid var(--border) !important;
+  background: var(--surface-light) !important;
+  border-radius: 10px 10px 0 0;
+  padding: 0 !important;
+  margin: 0 !important;
+  align-items: stretch !important;
+}
+
+.dex-panel-tabs::-webkit-scrollbar { display: none; }
+
+.dex-panel-tabs a {
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  font-size: 0.8rem;
+  padding: 0.6rem 0.75rem;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  margin-bottom: -1px;
+}
+
+.dex-panel-tabs a:hover {
+  color: var(--text);
+}
+
+.dex-panel-tabs a.is-active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  font-weight: 600;
+}
+
+.dex-tab-label {
+  display: inline;
+}
+
+.dex-tab-badge {
+  font-size: 0.62rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0 0.35rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.dex-panel-tabs a.is-active .dex-tab-badge {
+  background: rgba(76, 175, 80, 0.12);
+  border-color: rgba(76, 175, 80, 0.3);
+  color: #81C784;
+}
+
+
+/* Tab content panels — only active shown */
+
+.dex-tab-content {
+  display: none !important;
+}
+
+.dex-tab-content.is-active {
+  display: block !important;
+}
+
+/* ── Panel blocks (species rows) ── */
+
+.panel-block.dex-block {
+  display: flex !important;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.65rem 0.9rem !important;
+  border-top: 1px solid var(--border) !important;
+  background: var(--surface) !important;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.12s;
+  color: var(--text) !important;
+}
+
+.dex-tab-content.is-active .panel-block.dex-block:first-child {
+  border-top: none !important;
+}
+
+.panel-block.dex-block:hover {
+  background: var(--surface-light) !important;
+}
+
+.dex-block.is-seen {
+  background: rgba(76, 175, 80, 0.04) !important;
+}
+
+.dex-block.is-soon {
+  background: rgba(255, 152, 0, 0.04) !important;
+}
+
+/* Thumbnail */
+
+.dex-block-thumb {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--surface-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dex-block-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+}
+
+.dex-thumb-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.dex-seen-dot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 1.5px solid var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.dex-seen-dot::after {
+  content: '✓';
+  font-size: 0.45rem;
+  color: white;
+  line-height: 1;
+}
+
+/* Species info */
+
+.dex-block-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.dex-block-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dex-block-sci {
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 0.05rem;
+}
+
+.dex-block-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  margin-top: 0.3rem;
+}
+
+.dex-block-meta {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  margin-right: 0.1rem;
+}
+
+.dex-seen-label {
+  font-size: 0.65rem;
+  color: #81C784;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* "Show more" row */
+
+.dex-panel-more {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.9rem !important;
+  border-top: 1px solid var(--border) !important;
+  background: var(--surface) !important;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ── Season pill ── */
+
+.dex-season-pill {
+  font-size: 0.65rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: var(--surface-light);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.dex-season-pill.is-inseason {
+  background: rgba(76, 175, 80, 0.12);
+  color: #81C784;
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+.dex-season-pill.is-soon {
+  background: rgba(255, 152, 0, 0.12);
+  color: #FFB74D;
+  border-color: rgba(255, 152, 0, 0.3);
+}
+
+/* ── Rarity pill ── */
+
+.dex-rarity-pill {
+  font-size: 0.62rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.dex-rarity-pill.is-common {
+  background: rgba(96, 125, 139, 0.15);
+  color: #90a4ae;
+  border-color: rgba(96, 125, 139, 0.3);
+}
+
+.dex-rarity-pill.is-uncommon {
+  background: rgba(255, 193, 7, 0.1);
+  color: #ffd54f;
+  border-color: rgba(255, 193, 7, 0.25);
+}
+
+.dex-rarity-pill.is-rare {
+  background: rgba(156, 39, 176, 0.15);
+  color: #ce93d8;
+  border-color: rgba(156, 39, 176, 0.3);
+}
+
+/* ── Bottom sheet ── */
+
+.dex-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 40;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.dex-sheet-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.dex-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-radius: 16px 16px 0 0;
+  z-index: 50;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.dex-sheet.is-open {
+  transform: translateY(0);
+}
+
+.dex-sheet-handle {
+  width: 36px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 0.7rem auto 0;
+}
+
+.dex-sheet-content {
+  padding: 1rem 1.25rem 2.5rem;
+}
+
+.dex-sheet-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dex-sheet-thumb-lg {
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--surface-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dex-sheet-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.dex-sheet-sci {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--text-secondary);
+  margin-top: 0.1rem;
+}
+
+.dex-sheet-obs {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.dex-sheet-badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.dex-sheet-badge {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+.dex-sheet-badge.is-seen {
+  background: rgba(76, 175, 80, 0.12);
+  color: #81C784;
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+.dex-sheet-badge.is-season {
+  background: rgba(76, 175, 80, 0.08);
+  color: #a5d6a7;
+  border-color: rgba(76, 175, 80, 0.2);
+}
+
+/* ── Sheet sections ── */
+
+.dex-sheet-section {
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+}
+
+.dex-sheet-map {
+  height: 200px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--surface-light);
+}
+
+/* ── Mini season chart ── */
+
+.dex-mini-season {
+  display: flex;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.dex-mini-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.dex-mini-col span {
+  font-size: 0.58rem;
+  color: var(--text-muted);
+}
+
+.dex-mini-col.is-current span {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.dex-mini-bar-wrap {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.dex-mini-bar {
+  width: 100%;
+  background: var(--surface-light);
+  border-radius: 2px 2px 0 0;
+  min-height: 3px;
+}
+
+.dex-mini-bar.is-current {
+  background: var(--primary);
+}
+
+/* ── Desktop ── */
+
+@media (min-width: 1024px) {
+
+  .dex-sheet {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%) translateY(100%);
+    width: 480px;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .dex-sheet.is-open {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .dex-tab-label {
+    display: inline;
+  }
+}
