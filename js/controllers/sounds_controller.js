@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 import { getSounds } from "../services/xeno_canto_api.js"
 import { getXenoCantoApiKey } from "../services/settings_service.js"
+import { getActiveCoords } from "../services/location_service.js"
 
 export default class extends Controller {
   static targets = ["container", "grid", "loadMore"]
@@ -33,7 +34,7 @@ export default class extends Controller {
 
   async loadSounds() {
     try {
-      const { recordings } = await getSounds(this.sciName)
+      const { recordings } = await getSounds(this.sciName, getActiveCoords())
 
       if (recordings.length === 0) {
         this.containerTarget.style.display = "none"
