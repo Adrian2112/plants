@@ -101,6 +101,18 @@ export async function getUserSpecies(username, { lat, lng, radius, locale = "en"
   })
 }
 
+export async function getUserObservationDates(username, { lat, lng, radius } = {}) {
+  let url = `${BASE}/observations?user_login=${encodeURIComponent(username)}&per_page=500&order_by=observed_on&order=desc&quality_grade=research`
+  if (lat != null && lng != null) url += `&lat=${lat}&lng=${lng}&radius=${radius ?? 200}`
+  const data = await apiFetch(url)
+  const dates = {}
+  for (const obs of data.results) {
+    const id = obs.taxon?.id
+    if (id && obs.observed_on && !dates[id]) dates[id] = obs.observed_on
+  }
+  return dates
+}
+
 export async function getNearbySpecies({ lat, lng, radius, locale = "en" } = {}) {
   if (lat == null || lng == null) return []
   let url = `${BASE}/observations/species_counts?per_page=500&locale=${locale}&lat=${lat}&lng=${lng}&radius=${radius ?? 50}`

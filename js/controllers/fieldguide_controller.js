@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
-import { getNearbySpecies, getNearbySpeciesForMonth, getUserSpecies, getHistogram } from "../services/inat_api.js"
+import { getNearbySpecies, getNearbySpeciesForMonth, getUserSpecies, getUserObservationDates, getHistogram } from "../services/inat_api.js"
 import { getActiveCoords, getLocationName, onLocationChange, setActiveLocation } from "../services/location_service.js"
-import { getUsername, getPrimaryLanguage } from "../services/settings_service.js"
+import { getUsername, getPrimaryLanguage, getSecondaryLanguage, LANGUAGES } from "../services/settings_service.js"
 import { getDisplayName } from "../services/taxon_filters.js"
 
 const TAB_ICONS = {
@@ -34,10 +34,12 @@ export default class extends Controller {
   }
 
   connect() {
-    this.allSpecies   = []
-    this.inSeasonIds  = new Set()
-    this.soonIds      = new Set()
-    this.seenIds      = new Set()
+    this.allSpecies    = []
+    this.inSeasonIds   = new Set()
+    this.soonIds       = new Set()
+    this.seenIds       = new Set()
+    this.seenDates     = {}
+    this.secondaryNames = {}
     this.activeTab    = null
     this.sheetMapInst = null
     this.sheetHeatLayer = null
@@ -115,33 +117,31 @@ export default class extends Controller {
     if (!coords) { this.showNoLocation(); return }
 
     const { lat, lng } = coords
-    const radius  = coords.radius ?? this.radiusValue
-    const locale  = getPrimaryLanguage()
-    const month   = new Date().getMonth() + 1
-    const nextMo  = month === 12 ? 1 : month + 1
+    const radius         = coords.radius ?? this.radiusValue
+    const locale         = getPrimaryLanguage()
+    const secondaryLocale = getSecondaryLanguage()
+    const month          = new Date().getMonth() + 1
+    const nextMo         = month === 12 ? 1 : month + 1
+    const username       = getUsername()
 
     this.showLoading()
 
     try {
-      const [all, thisMonth, nextMonth] = await Promise.all([
+      const [all, thisMonth, nextMonth, seenData, secondaryData, datesData] = await Promise.all([
         getNearbySpecies({ lat, lng, radius, locale }),
         getNearbySpeciesForMonth({ lat, lng, radius, locale, month }),
         getNearbySpeciesForMonth({ lat, lng, radius, locale, month: nextMo }),
+        username ? getUserSpecies(username, { lat, lng, radius, locale }).catch(() => []) : Promise.resolve([]),
+        secondaryLocale ? getNearbySpecies({ lat, lng, radius, locale: secondaryLocale }).catch(() => []) : Promise.resolve([]),
+        username ? getUserObservationDates(username, { lat, lng, radius }).catch(() => ({})) : Promise.resolve({}),
       ])
 
-      this.allSpecies  = all.sort((a, b) => b.count - a.count)
-      this.inSeasonIds = new Set(thisMonth.map(e => e.taxon.id))
-      this.soonIds     = new Set(nextMonth.filter(e => !this.inSeasonIds.has(e.taxon.id)).map(e => e.taxon.id))
-
-      const username = getUsername()
-      if (username) {
-        try {
-          const seen = await getUserSpecies(username, { lat, lng, radius, locale })
-          this.seenIds = new Set(seen.map(e => e.taxon.id))
-        } catch { this.seenIds = new Set() }
-      } else {
-        this.seenIds = new Set()
-      }
+      this.allSpecies     = all.sort((a, b) => b.count - a.count)
+      this.inSeasonIds    = new Set(thisMonth.map(e => e.taxon.id))
+      this.soonIds        = new Set(nextMonth.filter(e => !this.inSeasonIds.has(e.taxon.id)).map(e => e.taxon.id))
+      this.seenIds        = new Set(seenData.map(e => e.taxon.id))
+      this.secondaryNames = Object.fromEntries(secondaryData.map(e => [e.taxon.id, e.taxon.preferred_common_name || ""]))
+      this.seenDates      = datesData
 
       this.render()
     } catch {
@@ -246,19 +246,28 @@ export default class extends Controller {
   }
 
   renderItems(items) {
+    const secondaryLocale = getSecondaryLanguage()
+    const secondaryLabel  = secondaryLocale ? (LANGUAGES.find(l => l.code === secondaryLocale)?.label || secondaryLocale) : null
+
     return items.map(({ count, taxon }) => {
-      const seen     = this.seenIds.has(taxon.id)
-      const inSeason = this.inSeasonIds.has(taxon.id)
-      const soon     = this.soonIds.has(taxon.id)
-      const name     = taxon.preferred_common_name || taxon.name
-      const photo    = taxon.default_photo?.square_url || ""
-      const icon     = TAB_ICONS[getDisplayName(taxon.iconic_taxon_name)] || "🌍"
+      const seen          = this.seenIds.has(taxon.id)
+      const inSeason      = this.inSeasonIds.has(taxon.id)
+      const soon          = this.soonIds.has(taxon.id)
+      const name          = taxon.preferred_common_name || taxon.name
+      const photo         = taxon.default_photo?.square_url || ""
+      const icon          = TAB_ICONS[getDisplayName(taxon.iconic_taxon_name)] || "🌍"
+      const secondary     = secondaryLocale ? (this.secondaryNames[taxon.id] || "") : ""
+      const lastSeen      = seen ? (this.seenDates[taxon.id] || "") : ""
 
       const seasonPill = inSeason
         ? `<span class="dex-season-pill is-inseason">🌱 In season</span>`
         : soon
         ? `<span class="dex-season-pill is-soon">🔜 Coming soon</span>`
         : `<span class="dex-season-pill">❄ Off season</span>`
+
+      const seenLabel = seen
+        ? `<span class="dex-seen-label">Seen ✓${lastSeen ? ` · ${formatDate(lastSeen)}` : ""}</span>`
+        : ""
 
       return `
         <a class="panel-block dex-block ${seen ? "is-seen" : ""} ${soon && !inSeason ? "is-soon" : ""}"
@@ -272,6 +281,8 @@ export default class extends Controller {
            data-taxon-seen="${seen}"
            data-taxon-inseason="${inSeason}"
            data-taxon-soon="${soon}"
+           data-taxon-secondary="${secondary}"
+           data-taxon-last-seen="${lastSeen}"
            data-taxon-group="${getDisplayName(taxon.iconic_taxon_name)}">
           <div class="dex-block-thumb">
             ${photo
@@ -281,11 +292,12 @@ export default class extends Controller {
           </div>
           <div class="dex-block-body">
             <div class="dex-block-name">${name}</div>
+            ${secondary ? `<div class="bookmark-secondary">${secondary}</div>` : ""}
             <div class="dex-block-sci">${taxon.name}</div>
             <div class="dex-block-footer">
               <span class="dex-block-meta">${count.toLocaleString()} obs</span>
               ${seasonPill}
-              ${seen ? `<span class="dex-seen-label">Seen ✓</span>` : ""}
+              ${seenLabel}
             </div>
           </div>
         </a>`
@@ -412,7 +424,7 @@ export default class extends Controller {
   openSheet(e) {
     e.preventDefault()
     const el = e.currentTarget
-    const { taxonId, taxonName, taxonSci, taxonCount, taxonPhoto, taxonSeen, taxonInseason, taxonSoon } = el.dataset
+    const { taxonId, taxonName, taxonSci, taxonCount, taxonPhoto, taxonSeen, taxonInseason, taxonSoon, taxonSecondary, taxonLastSeen } = el.dataset
     const seen     = taxonSeen === "true"
     const inSeason = taxonInseason === "true"
     const soon     = taxonSoon === "true"
@@ -423,7 +435,9 @@ export default class extends Controller {
 
     this.sheetNameTarget.textContent = taxonName
     this.sheetSciTarget.textContent  = taxonSci
-    this.sheetObsTarget.textContent  = `${parseInt(taxonCount).toLocaleString()} observations nearby`
+    this.sheetObsTarget.innerHTML    =
+      `${parseInt(taxonCount).toLocaleString()} observations nearby`
+      + (taxonSecondary ? ` · <em style="color:var(--text-secondary);font-style:normal;">${taxonSecondary}</em>` : "")
     this.sheetLinkTarget.href        = `taxon.html?taxon_id=${taxonId}`
 
     const seasonBadge = inSeason
@@ -432,8 +446,11 @@ export default class extends Controller {
       ? `<span class="dex-sheet-badge" style="background:rgba(255,152,0,.12);color:#FFB74D;border-color:rgba(255,152,0,.3);">🔜 Coming soon</span>`
       : `<span class="dex-sheet-badge" style="background:rgba(96,125,139,.12);color:#90a4ae;border-color:rgba(96,125,139,.3);">❄ Off season</span>`
 
-    this.sheetBadgesTarget.innerHTML =
-      `${seen ? `<span class="dex-sheet-badge is-seen">✓ Observed by you</span>` : ""}${seasonBadge}`
+    const seenBadge = seen
+      ? `<span class="dex-sheet-badge is-seen">✓ Last seen${taxonLastSeen ? ` ${formatDate(taxonLastSeen)}` : ""}</span>`
+      : ""
+
+    this.sheetBadgesTarget.innerHTML = `${seenBadge}${seasonBadge}`
 
     this.sheetChartTarget.innerHTML =
       `<div style="color:var(--text-muted);font-size:0.75rem;text-align:center;padding-top:0.5rem;">Loading…</div>`
@@ -518,4 +535,12 @@ export default class extends Controller {
     if (!this.L) this.L = await import("leaflet")
     return this.L
   }
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return ""
+  const d = new Date(dateStr + "T00:00:00")
+  const now = new Date()
+  const sameYear = d.getFullYear() === now.getFullYear()
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric", ...(!sameYear && { year: "numeric" }) })
 }
