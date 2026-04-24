@@ -92,7 +92,7 @@ export default class extends Controller {
 
     bookmarks.sort((a, b) => new Date(b.saved_at) - new Date(a.saved_at))
     this.allBookmarks = await Promise.all(bookmarks.map(async b => ({
-      ...b, noteCount: await getNoteCountForTaxon(b.taxon_id)
+      ...b, noteCount: await getNoteCountForTaxon(b.taxon_id).catch(() => 0),
     })))
     this.renderItems()
     this.fetchSecondaryNames()

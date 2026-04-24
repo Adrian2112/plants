@@ -1,7 +1,26 @@
 const BASE = "https://api.inaturalist.org/v1"
 const TTL = 24 * 60 * 60 * 1000
+const STORAGE_KEY = "plantscope_apicache"
 
 const cache = new Map()
+
+// Load persisted entries on module init
+;(function loadPersistedCache() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return
+    const now = Date.now()
+    for (const [url, entry] of JSON.parse(raw)) {
+      if (now - entry.ts < TTL) cache.set(url, entry)
+    }
+  } catch {}
+})()
+
+function persistCache() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([...cache.entries()]))
+  } catch {}
+}
 
 function fromCache(url) {
   const entry = cache.get(url)
@@ -17,6 +36,7 @@ async function apiFetch(url) {
   if (!res.ok) throw new Error(`API error ${res.status}`)
   const data = await res.json()
   cache.set(url, { data, ts: Date.now() })
+  persistCache()
   return data
 }
 

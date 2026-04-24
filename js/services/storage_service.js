@@ -1,5 +1,5 @@
 const DB_NAME = "plantscope_db"
-const DB_VERSION = 1
+const DB_VERSION = 2
 
 function openDB() {
   return new Promise((resolve, reject) => {
