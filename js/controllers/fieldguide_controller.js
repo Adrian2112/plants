@@ -490,11 +490,14 @@ export default class extends Controller {
       }
     }
 
-    if (this.sheetHeatLayer) this.sheetMapInst.removeLayer(this.sheetHeatLayer)
-    this.sheetHeatLayer = L.tileLayer(
-      `https://api.inaturalist.org/v1/heatmap/{z}/{x}/{y}.png?taxon_id=${taxonId}`,
-      { opacity: 0.7, maxZoom: 16 }
-    ).addTo(this.sheetMapInst)
+    const heatUrl = `https://api.inaturalist.org/v1/heatmap/{z}/{x}/{y}.png?taxon_id=${taxonId}`
+    if (this.sheetHeatLayer) {
+      this.sheetHeatLayer.setUrl(heatUrl)
+    } else {
+      this.sheetHeatLayer = L.tileLayer(heatUrl, {
+        opacity: 0.7, maxZoom: 16, keepBuffer: 0, updateWhenZooming: false,
+      }).addTo(this.sheetMapInst)
+    }
 
     setTimeout(() => this.sheetMapInst.invalidateSize(), 60)
   }

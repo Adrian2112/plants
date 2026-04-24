@@ -58,14 +58,14 @@ export default class extends Controller {
 
     this.renderViewToggle()
 
+    const heatUrl = `https://api.inaturalist.org/v1/heatmap/{z}/{x}/{y}.png?taxon_id=${this.taxonId}`
     if (this.heatmapLayer) {
-      this.map.removeLayer(this.heatmapLayer)
+      this.heatmapLayer.setUrl(heatUrl)
+    } else {
+      this.heatmapLayer = L.tileLayer(heatUrl, {
+        opacity: 0.5, maxZoom: 16, keepBuffer: 0, updateWhenZooming: false,
+      }).addTo(this.map)
     }
-
-    this.heatmapLayer = L.tileLayer(
-      `https://api.inaturalist.org/v1/heatmap/{z}/{x}/{y}.png?taxon_id=${this.taxonId}`,
-      { opacity: 0.5, maxZoom: 16 }
-    ).addTo(this.map)
 
     setTimeout(() => this.map.invalidateSize(), 100)
   }

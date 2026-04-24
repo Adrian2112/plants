@@ -77,6 +77,7 @@ export async function getObservationPhotos(taxonId, { termId, termValueId, page 
     for (const p of obs.photos || []) {
       photos.push({
         id: p.id,
+        obsId: obs.id,
         small: p.url?.replace("square", "small"),
         medium: p.url?.replace("square", "medium"),
         large: p.url?.replace("square", "large"),
