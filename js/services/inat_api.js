@@ -83,6 +83,7 @@ export async function getObservationPhotos(taxonId, { termId, termValueId, page 
         attribution: p.attribution,
         observer: obs.user?.login,
         date: obs.observed_on,
+        place: obs.place_guess || null,
       })
     }
   }

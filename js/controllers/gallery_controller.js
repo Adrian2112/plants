@@ -135,6 +135,7 @@ export default class extends Controller {
       this.mineGridTarget.innerHTML = photos.map((p, i) => `
         <div class="gallery-item" data-action="click->gallery#openMineLightbox" data-mine-index="${i}">
           <img src="${p.small}" alt="My observation" loading="lazy">
+          ${p.place ? `<div class="gallery-item-place">📍 ${p.place}</div>` : ""}
         </div>
       `).join("")
     } catch { /* silently skip */ }
@@ -183,6 +184,7 @@ export default class extends Controller {
     this.lightboxCaptionTarget.innerHTML = `
       <span>${photo.attribution || ""}</span>
       ${photo.date ? `<span class="ml-2">${photo.date}</span>` : ""}
+      ${photo.place ? `<span class="ml-2">📍 ${photo.place}</span>` : ""}
     `
   }
 
